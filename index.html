@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Ventas SISACT - NETORA SRL</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <style>
+    body { background-color: #f0f2f5; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .main-card { max-width: 780px; margin: 25px auto; border: none; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .card-header { background-color: #dc3545; color: white; border-radius: 12px 12px 0 0 !important; padding: 16px 20px; }
+    .nav-tabs .nav-link { font-weight: 600; color: #495057; border-top-left-radius: 8px; border-top-right-radius: 8px; }
+    .nav-tabs .nav-link.active { color: #dc3545; border-bottom: 3px solid #dc3545; }
+    .form-section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #6c757d; margin-top: 15px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .btn-action { font-weight: 600; padding: 10px 16px; }
+    .export-box { border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; background: #fafbfc; margin-bottom: 15px; }
+    .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1055; }
+  </style>
+</head>
+<body>
+
+  <div class="container pb-4">
+    <div class="card main-card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-broadcast-pin me-2"></i>NETORA SRL - Sistema SISACT</h5>
+        <span class="badge bg-light text-dark" id="apiStatus"><i class="bi bi-circle-fill text-warning me-1"></i>Conectando</span>
+      </div>
+
+      <div class="card-body p-4">
+        <ul class="nav nav-tabs mb-4" id="mainTab" role="tablist">
+          <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-fija"><i class="bi bi-house-door me-1"></i>PDV - FIJA</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-movil"><i class="bi bi-phone me-1"></i>PDV - MOVIL</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-lineas"><i class="bi bi-sim me-1"></i>Portabilidad / Altas</button></li>
+          <li class="nav-item"><button class="nav-link text-success" data-bs-toggle="tab" data-bs-target="#tab-descargas"><i class="bi bi-file-earmark-excel me-1"></i>Descargas XLSX</button></li>
+        </ul>
+
+        <div class="tab-content">
+
+          <!-- 1. PDV FIJA -->
+          <div class="tab-pane fade show active" id="tab-fija">
+            <form id="formFija" onsubmit="event.preventDefault(); enviarFormulario('fija');">
+              <div class="row g-2">
+                <div class="col-md-6">
+                  <label class="form-label">Asesor FFVV</label>
+                  <input type="text" id="fija_ffvv" class="form-control" placeholder="Nombre completo" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Correo del Asesor / Negocio</label>
+                  <input type="email" id="fija_correo" class="form-control" placeholder="correo@gmail.com">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">RUC</label>
+                  <input type="text" id="fija_ruc" class="form-control" maxlength="11" placeholder="10 / 20..." required>
+                </div>
+                <div class="col-md-8">
+                  <label class="form-label">Razón Social</label>
+                  <input type="text" id="fija_razon" class="form-control" required>
+                </div>
+              </div>
+
+              <div class="form-section-title">Datos del Servicio & Oferta</div>
+              <div class="row g-2">
+                <div class="col-md-6">
+                  <label class="form-label">Servicio</label>
+                  <input type="text" id="fija_servicio" class="form-control" value="2 PLAY 400 Mbps">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Plan Técnico</label>
+                  <input type="text" id="fija_plan" class="form-control" value="INTERNET + TV CLARO ESTANDAR PRO">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Cargo Fijo Mensual</label>
+                  <input type="text" id="fija_cf" class="form-control" value="S/ 170.00">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Promoción</label>
+                  <input type="text" id="fija_promocion" class="form-control" value="S/. 109.00 X 6 MESES">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Plano</label>
+                  <input type="text" id="fija_plano" class="form-control" placeholder="Ej: LMSC122-S">
+                </div>
+              </div>
+
+              <div class="form-section-title">Ubicación de Instalación (Ubigeo)</div>
+              <div class="row g-2">
+                <div class="col-md-12">
+                  <label class="form-label">Dirección Detallada</label>
+                  <input type="text" id="fija_dir" class="form-control" placeholder="Av / Jr / Calle, Número, Urbanización" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Departamento</label>
+                  <select id="fija_dep" class="form-select" onchange="cargarProvincias('fija')" required>
+                    <option value="">Cargando departamentos...</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Provincia</label>
+                  <select id="fija_prov" class="form-select" onchange="cargarDistritos('fija')" required>
+                    <option value="">Seleccione provincia...</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Distrito</label>
+                  <select id="fija_dist" class="form-select" required>
+                    <option value="">Seleccione distrito...</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Referencia</label>
+                  <input type="text" id="fija_ref" class="form-control">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Coordenadas GPS</label>
+                  <input type="text" id="fija_coordenadas" class="form-control" placeholder="-12.09611 / -76.972836">
+                </div>
+              </div>
+
+              <div class="form-section-title">Contactos de Instalación</div>
+              <div class="row g-2">
+                <div class="col-md-6">
+                  <label class="form-label">Nombre de Contacto</label>
+                  <input type="text" id="fija_cto_nombre" class="form-control">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">DNI Contacto</label>
+                  <input type="text" id="fija_cto_dni" class="form-control" maxlength="8">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Teléfono 1</label>
+                  <input type="text" id="fija_cto_tel1" class="form-control">
+                </div>
+              </div>
+
+              <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary btn-action flex-grow-1" id="btnGuardarFija">
+                  <i class="bi bi-cloud-arrow-up me-1"></i>Guardar en Google Sheets
+                </button>
+                <button type="button" class="btn btn-outline-success btn-action" onclick="descargarXlsxDirecto('FIJA')">
+                  <i class="bi bi-download me-1"></i>Descargar .xlsx
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- 2. PDV MOVIL -->
+          <div class="tab-pane fade" id="tab-movil">
+            <form id="formMovil" onsubmit="event.preventDefault(); enviarFormulario('movil');">
+              <div class="row g-2">
+                <div class="col-md-6">
+                  <label class="form-label">Asesor FFVV</label>
+                  <input type="text" id="movil_ffvv" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Código Large</label>
+                  <input type="text" id="movil_codigo" class="form-control">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">RUC</label>
+                  <input type="text" id="movil_ruc" class="form-control" maxlength="11" required>
+                </div>
+                <div class="col-md-8">
+                  <label class="form-label">Razón Social</label>
+                  <input type="text" id="movil_razon" class="form-control" required>
+                </div>
+              </div>
+
+              <div class="form-section-title">Lugar de Entrega</div>
+              <div class="row g-2">
+                <div class="col-md-12">
+                  <label class="form-label">Dirección de Entrega</label>
+                  <input type="text" id="movil_dir" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Departamento</label>
+                  <select id="movil_dep" class="form-select" onchange="cargarProvincias('movil')" required>
+                    <option value="">Seleccione Departamento...</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Provincia</label>
+                  <select id="movil_prov" class="form-select" onchange="cargarDistritos('movil')" required>
+                    <option value="">Seleccione Provincia...</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Distrito</label>
+                  <select id="movil_dist" class="form-select" required>
+                    <option value="">Seleccione Distrito...</option>
+                  </select>
+                </div>
+                <div class="col-md-12">
+                  <label class="form-label">Referencia de Entrega</label>
+                  <input type="text" id="movil_ref" class="form-control">
+                </div>
+              </div>
+
+              <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-danger btn-action flex-grow-1" id="btnGuardarMovil">
+                  <i class="bi bi-cloud-arrow-up me-1"></i>Guardar en PDV - MOVIL
+                </button>
+                <button type="button" class="btn btn-outline-success btn-action" onclick="irADescargas()">
+                  <i class="bi bi-sliders me-1"></i>Opciones de Descarga
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- 3. PORTABILIDAD / ALTAS -->
+          <div class="tab-pane fade" id="tab-lineas">
+            <form id="formLinea" onsubmit="event.preventDefault(); enviarLinea();">
+              <div class="row g-2">
+                <div class="col-md-6">
+                  <label class="form-label">Hoja Destino</label>
+                  <select id="linea_hoja" class="form-select">
+                    <option value="HOJA 2 - PORTABILIDAD">HOJA 2 - PORTABILIDAD</option>
+                    <option value="HOJA 3 ALTA NUEVA">HOJA 3 ALTA NUEVA</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Número Móvil</label>
+                  <input type="text" id="linea_numero" class="form-control" placeholder="9XXXXXXXX" maxlength="9" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Plan Tarifario</label>
+                  <input type="text" id="linea_plan" class="form-control" placeholder="Max Ilimitado 69.90" required>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Cargo Fijo</label>
+                  <input type="text" id="linea_cf" class="form-control" placeholder="69.90" required>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">CF Final</label>
+                  <input type="text" id="linea_cffinal" class="form-control" placeholder="34.95">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Equipo</label>
+                  <input type="text" id="linea_equipo" class="form-control" placeholder="Solo Chip o Modelo">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Precio del Equipo (S/)</label>
+                  <input type="text" id="linea_precio" class="form-control" value="0">
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-success btn-action w-100 mt-4" id="btnGuardarLinea">
+                <i class="bi bi-plus-circle me-1"></i>Insertar Línea en la Hoja
+              </button>
+            </form>
+          </div>
+
+          <!-- 4. CENTRO DE DESCARGAS XLSX -->
+          <div class="tab-pane fade" id="tab-descargas">
+            <div class="export-box">
+              <h6 class="fw-bold text-primary mb-1"><i class="bi bi-file-earmark-spreadsheet me-2"></i>PDV - FIJA (.xlsx)</h6>
+              <p class="text-muted small mb-3">Descarga exclusivamente la hoja <strong>PDV - FIJA</strong> empaquetada como libro de Excel independiente.</p>
+              <button class="btn btn-primary btn-sm w-100 fw-bold" onclick="descargarXlsxDirecto('FIJA')">
+                <i class="bi bi-download me-1"></i>Descargar Ficha Fija (.xlsx)
+              </button>
+            </div>
+
+            <div class="export-box">
+              <h6 class="fw-bold text-danger mb-1"><i class="bi bi-phone me-2"></i>PDV - MOVIL con Hojas Vinculadas (.xlsx)</h6>
+              <p class="text-muted small mb-2">Selecciona qué hojas secundarias deben integrarse en el <strong>mismo libro de Excel</strong> junto a PDV - MOVIL:</p>
+
+              <div class="form-check mb-1">
+                <input class="form-check-input" type="checkbox" checked disabled id="chk_base_movil">
+                <label class="form-check-label small" for="chk_base_movil">PDV - MOVIL (Ficha Principal)</label>
+              </div>
+              <div class="form-check mb-1">
+                <input class="form-check-input" type="checkbox" id="chk_porta">
+                <label class="form-check-label small" for="chk_porta">Incluir <strong>HOJA 2 - PORTABILIDAD</strong></label>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="chk_alta">
+                <label class="form-check-label small" for="chk_alta">Incluir <strong>HOJA 3 ALTA NUEVA</strong></label>
+              </div>
+
+              <button class="btn btn-danger btn-sm w-100 fw-bold" onclick="descargarXlsxMovilPersonalizado()">
+                <i class="bi bi-download me-1"></i>Descargar Libro Móvil Consolidado (.xlsx)
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container">
+    <div id="statusToast" class="toast align-items-center text-white bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" id="toastMessage">Iniciando...</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // PEGA AQUÍ LA URL DE TU APLICACIÓN WEB DE APPS SCRIPT (TERMINADA EN /exec)
+    const API_URL = "https://script.google.com/macros/s/TU_SCRIPT_ID/exec";
+
+    let cacheUbigeo = {};
+
+    window.addEventListener('DOMContentLoaded', () => {
+      cargarUbigeo();
+    });
+
+    function showToast(msg, bgClass = 'bg-primary') {
+      const toastEl = document.getElementById('statusToast');
+      const toastMsg = document.getElementById('toastMessage');
+      toastEl.className = `toast align-items-center text-white ${bgClass} border-0`;
+      toastMsg.innerText = msg;
+      const toast = new bootstrap.Toast(toastEl, { delay: 4000 });
+      toast.show();
+    }
+
+    async function cargarUbigeo() {
+      try {
+        const res = await fetch(`${API_URL}?action=ubigeo`);
+        const json = await res.json();
+        if (!json.success) throw new Error(json.error);
+
+        cacheUbigeo = json.data;
+        const depFija = document.getElementById('fija_dep');
+        const depMovil = document.getElementById('movil_dep');
+
+        depFija.innerHTML = '<option value="">Seleccione Departamento...</option>';
+        depMovil.innerHTML = '<option value="">Seleccione Departamento...</option>';
+
+        Object.keys(cacheUbigeo).sort().forEach(dep => {
+          depFija.add(new Option(dep, dep));
+          depMovil.add(new Option(dep, dep));
+        });
+
+        document.getElementById('apiStatus').innerHTML = '<i class="bi bi-check-circle-fill text-success me-1"></i>En línea';
+      } catch (err) {
+        document.getElementById('apiStatus').innerHTML = '<i class="bi bi-x-circle-fill text-danger me-1"></i>Error API';
+        showToast("Error al conectar con Apps Script: " + err.message, 'bg-danger');
+      }
+    }
+
+    function cargarProvincias(prefijo) {
+      const depSel = document.getElementById(`${prefijo}_dep`).value;
+      const provSelect = document.getElementById(`${prefijo}_prov`);
+      const distSelect = document.getElementById(`${prefijo}_dist`);
+
+      provSelect.innerHTML = '<option value="">Seleccione Provincia...</option>';
+      distSelect.innerHTML = '<option value="">Seleccione Distrito...</option>';
+
+      if (depSel && cacheUbigeo[depSel]) {
+        Object.keys(cacheUbigeo[depSel]).sort().forEach(prov => {
+          provSelect.add(new Option(prov, prov));
+        });
+      }
+    }
+
+    function cargarDistritos(prefijo) {
+      const depSel = document.getElementById(`${prefijo}_dep`).value;
+      const provSel = document.getElementById(`${prefijo}_prov`).value;
+      const distSelect = document.getElementById(`${prefijo}_dist`);
+
+      distSelect.innerHTML = '<option value="">Seleccione Distrito...</option>';
+
+      if (depSel && provSel && cacheUbigeo[depSel][provSel]) {
+        cacheUbigeo[depSel][provSel].sort().forEach(dist => {
+          distSelect.add(new Option(dist, dist));
+        });
+      }
+    }
+
+    async function enviarFormulario(tipo) {
+      const btn = document.getElementById(tipo === 'fija' ? 'btnGuardarFija' : 'btnGuardarMovil');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>Guardando...`;
+
+      let payload = {};
+      let action = tipo === 'fija' ? 'guardarFija' : 'guardarMovil';
+
+      if (tipo === 'fija') {
+        payload = {
+          ffvv: document.getElementById('fija_ffvv').value,
+          correo: document.getElementById('fija_correo').value,
+          ruc: document.getElementById('fija_ruc').value,
+          razonSocial: document.getElementById('fija_razon').value,
+          servicio: document.getElementById('fija_servicio').value,
+          plan: document.getElementById('fija_plan').value,
+          cf: document.getElementById('fija_cf').value,
+          promocion: document.getElementById('fija_promocion').value,
+          plano: document.getElementById('fija_plano').value,
+          dirInstalacion: document.getElementById('fija_dir').value,
+          departamento: document.getElementById('fija_dep').value,
+          provincia: document.getElementById('fija_prov').value,
+          distrito: document.getElementById('fija_dist').value,
+          referencia: document.getElementById('fija_ref').value,
+          coordenadas: document.getElementById('fija_coordenadas').value,
+          contactoNombre: document.getElementById('fija_cto_nombre').value,
+          contactoDni: document.getElementById('fija_cto_dni').value,
+          contactoTel1: document.getElementById('fija_cto_tel1').value
+        };
+      } else {
+        payload = {
+          ffvv: document.getElementById('movil_ffvv').value,
+          codigoLarge: document.getElementById('movil_codigo').value,
+          ruc: document.getElementById('movil_ruc').value,
+          razonSocial: document.getElementById('movil_razon').value,
+          dirEntrega: document.getElementById('movil_dir').value,
+          departamento: document.getElementById('movil_dep').value,
+          provincia: document.getElementById('movil_prov').value,
+          distrito: document.getElementById('movil_dist').value,
+          referencia: document.getElementById('movil_ref').value
+        };
+      }
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action, payload })
+        });
+        const json = await res.json();
+        if (!json.success) throw new Error(json.error);
+        showToast(json.message, 'bg-success');
+      } catch (err) {
+        showToast("Error al guardar: " + err.message, 'bg-danger');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+    }
+
+    async function enviarLinea() {
+      const btn = document.getElementById('btnGuardarLinea');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>Guardando...`;
+
+      const hoja = document.getElementById('linea_hoja').value;
+      const payload = {
+        linea: document.getElementById('linea_numero').value,
+        plan: document.getElementById('linea_plan').value,
+        cf: document.getElementById('linea_cf').value,
+        cfFinal: document.getElementById('linea_cffinal').value,
+        equipo: document.getElementById('linea_equipo').value,
+        precio: document.getElementById('linea_precio').value
+      };
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'agregarLinea', hoja, payload })
+        });
+        const json = await res.json();
+        if (!json.success) throw new Error(json.error);
+        showToast(json.message, 'bg-success');
+        document.getElementById('linea_numero').value = '';
+      } catch (err) {
+        showToast("Error: " + err.message, 'bg-danger');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="bi bi-plus-circle me-1"></i>Insertar Línea en la Hoja`;
+      }
+    }
+
+    function irADescargas() {
+      const tab = new bootstrap.Tab(document.querySelector('button[data-bs-target="#tab-descargas"]'));
+      tab.show();
+    }
+
+    function descargarXlsxDirecto(tipo) {
+      ejecutarDescargaBackend(tipo, false, false);
+    }
+
+    function descargarXlsxMovilPersonalizado() {
+      const incPorta = document.getElementById('chk_porta').checked;
+      const incAlta = document.getElementById('chk_alta').checked;
+      ejecutarDescargaBackend('MOVIL', incPorta, incAlta);
+    }
+
+    async function ejecutarDescargaBackend(tipo, incPorta, incAlta) {
+      showToast("Generando archivo Excel en el servidor...", 'bg-info');
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'descargarXlsx',
+            tipo,
+            incluirPorta: incPorta,
+            incluirAlta: incAlta
+          })
+        });
+
+        const json = await res.json();
+        if (!json.success) throw new Error(json.error);
+
+        // Convertir base64 a archivo binario y descargar
+        const byteCharacters = atob(json.base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = json.filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(link.href);
+
+        showToast("¡Descarga completada con éxito!", 'bg-success');
+      } catch (err) {
+        showToast("Error al descargar XLSX: " + err.message, 'bg-danger');
+      }
+    }
+  </script>
+</body>
+</html>
