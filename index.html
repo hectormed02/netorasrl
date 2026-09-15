@@ -28,7 +28,7 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <div>
           <h5 class="mb-0 fw-bold"><i class="bi bi-broadcast-pin me-2"></i>NETORA SRL - Sistema SISACT</h5>
-          <small class="text-white-50">Llenado Comercial & Exportación XLSX</small>
+          <small class="text-white-50">Llenado Comercial, Sobreescritura & Descarga XLSX</small>
         </div>
         <span class="badge bg-warning text-dark badge-api" id="apiStatus">
           <i class="bi bi-hourglass-split me-1"></i>Cargando Ubigeo...
@@ -48,11 +48,11 @@
 
           <!-- 1. PDV - FIJA -->
           <div class="tab-pane fade show active" id="tab-fija">
-            <form id="formFija" onsubmit="event.preventDefault(); enviarFormulario('fija');">
+            <form id="formFija" onsubmit="event.preventDefault(); ejecutarAccionFija('guardar');">
               <div class="row g-2">
                 <div class="col-md-6">
                   <label class="form-label">Asesor FFVV</label>
-                  <input type="text" id="fija_ffvv" class="form-control" placeholder="Nombre completo" required>
+                  <input type="text" id="fija_ffvv" class="form-control" placeholder="Ej: Manuel Perez Godoy" required>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Correo Electrónico</label>
@@ -64,7 +64,7 @@
                 </div>
                 <div class="col-md-8">
                   <label class="form-label">Razón Social</label>
-                  <input type="text" id="fija_razon" class="form-control" placeholder="Nombre de empresa o titular" required>
+                  <input type="text" id="fija_razon" class="form-control" placeholder="Nombre comercial o titular" required>
                 </div>
               </div>
 
@@ -118,7 +118,7 @@
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Referencia</label>
-                  <input type="text" id="fija_ref" class="form-control" placeholder="Ej: Frente a comisaría">
+                  <input type="text" id="fija_ref" class="form-control" placeholder="Ej: Frente a comisaría / parque">
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Coordenadas GPS</label>
@@ -156,10 +156,10 @@
 
               <div class="d-flex gap-2 mt-4">
                 <button type="submit" class="btn btn-primary btn-action flex-grow-1" id="btnGuardarFija">
-                  <i class="bi bi-cloud-arrow-up me-1"></i>Guardar en Google Sheets
+                  <i class="bi bi-cloud-arrow-up me-1"></i>Guardar y Sobreescribir en Sheets
                 </button>
-                <button type="button" class="btn btn-outline-success btn-action" onclick="descargarXlsxDirecto('FIJA')">
-                  <i class="bi bi-download me-1"></i>Descargar .xlsx
+                <button type="button" class="btn btn-outline-success btn-action" onclick="ejecutarAccionFija('descargar')">
+                  <i class="bi bi-download me-1"></i>Guardar y Descargar .xlsx
                 </button>
               </div>
             </form>
@@ -167,7 +167,7 @@
 
           <!-- 2. PDV - MOVIL -->
           <div class="tab-pane fade" id="tab-movil">
-            <form id="formMovil" onsubmit="event.preventDefault(); enviarFormulario('movil');">
+            <form id="formMovil" onsubmit="event.preventDefault(); ejecutarAccionMovil('guardar');">
               <div class="row g-2">
                 <div class="col-md-6">
                   <label class="form-label">Asesor FFVV</label>
@@ -219,10 +219,10 @@
 
               <div class="d-flex gap-2 mt-4">
                 <button type="submit" class="btn btn-danger btn-action flex-grow-1" id="btnGuardarMovil">
-                  <i class="bi bi-cloud-arrow-up me-1"></i>Guardar en PDV - MOVIL
+                  <i class="bi bi-cloud-arrow-up me-1"></i>Guardar y Sobreescribir en PDV - MOVIL
                 </button>
-                <button type="button" class="btn btn-outline-success btn-action" onclick="irADescargas()">
-                  <i class="bi bi-sliders me-1"></i>Opciones de Descarga
+                <button type="button" class="btn btn-outline-success btn-action" onclick="ejecutarAccionMovil('descargar')">
+                  <i class="bi bi-download me-1"></i>Guardar y Descargar .xlsx
                 </button>
               </div>
             </form>
@@ -252,7 +252,7 @@
                   <input type="text" id="linea_cf" class="form-control" placeholder="69.90" required>
                 </div>
                 <div class="col-md-3">
-                  <label class="form-label">Cargo Fijo Final (Promoción)</label>
+                  <label class="form-label">CF Final (Promoción)</label>
                   <input type="text" id="linea_cffinal" class="form-control" placeholder="34.95">
                 </div>
                 <div class="col-md-6">
@@ -265,9 +265,14 @@
                 </div>
               </div>
 
-              <button type="submit" class="btn btn-success btn-action w-100 mt-4" id="btnGuardarLinea">
-                <i class="bi bi-plus-circle me-1"></i>Insertar Línea en la Hoja
-              </button>
+              <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-success btn-action flex-grow-1" id="btnGuardarLinea">
+                  <i class="bi bi-plus-circle me-1"></i>Insertar Línea
+                </button>
+                <button type="button" class="btn btn-outline-danger btn-action" onclick="borrarLineasDeHoja()">
+                  <i class="bi bi-trash me-1"></i>Limpiar tabla de líneas
+                </button>
+              </div>
             </form>
           </div>
 
@@ -275,19 +280,19 @@
           <div class="tab-pane fade" id="tab-descargas">
             <div class="export-box">
               <h6 class="fw-bold text-primary mb-1"><i class="bi bi-file-earmark-spreadsheet me-2"></i>PDV - FIJA (.xlsx)</h6>
-              <p class="text-muted small mb-3">Exporta únicamente la ficha técnica de instalación fija en un libro de Excel independiente.</p>
+              <p class="text-muted small mb-3">Descarga directamente la ficha de instalación fija con los datos recién sobreescritos.</p>
               <button class="btn btn-primary btn-sm w-100 fw-bold" onclick="descargarXlsxDirecto('FIJA')">
-                <i class="bi bi-download me-1"></i>Descargar Ficha Fija (.xlsx)
+                <i class="bi bi-download me-1"></i>Descargar PDV - FIJA (.xlsx)
               </button>
             </div>
 
             <div class="export-box">
               <h6 class="fw-bold text-danger mb-1"><i class="bi bi-phone me-2"></i>PDV - MOVIL con Pestañas Vinculadas (.xlsx)</h6>
-              <p class="text-muted small mb-2">Marca las casillas para empaquetar en el <strong>mismo archivo de Excel</strong> las hojas adicionales:</p>
+              <p class="text-muted small mb-2">Empaqueta en el mismo libro Excel las hojas seleccionadas:</p>
 
               <div class="form-check mb-1">
                 <input class="form-check-input" type="checkbox" checked disabled id="chk_base_movil">
-                <label class="form-check-label small" for="chk_base_movil">PDV - MOVIL (Carátula principal)</label>
+                <label class="form-check-label small" for="chk_base_movil">PDV - MOVIL (Ficha Principal)</label>
               </div>
               <div class="form-check mb-1">
                 <input class="form-check-input" type="checkbox" id="chk_porta">
@@ -337,7 +342,6 @@
       toast.show();
     }
 
-    // CARGA DE UBIGEO CON SISTEMA DUAL: FETCH + FALLBACK JSONP
     async function cargarUbigeoDesdeSheets() {
       try {
         const res = await fetch(`${API_URL}?action=ubigeo`);
@@ -348,18 +352,15 @@
         }
         throw new Error(json.error || "Datos vacíos");
       } catch (errFetch) {
-        console.warn("Fetch bloqueado, intentando JSONP...", errFetch);
         try {
           const dataJsonp = await cargarViaJSONP(`${API_URL}?action=ubigeo`);
           if (dataJsonp.success && dataJsonp.data) {
             procesarDataUbigeo(dataJsonp.data);
             return;
           }
-          throw new Error("Respuesta inválida en JSONP");
         } catch (errJsonp) {
           document.getElementById('apiStatus').className = 'badge bg-danger badge-api';
           document.getElementById('apiStatus').innerHTML = '<i class="bi bi-x-circle-fill text-white me-1"></i>Error en Ubigeo';
-          showToast("Error al conectar: " + errJsonp.message, 'bg-danger');
         }
       }
     }
@@ -377,7 +378,7 @@
         script.onerror = function() {
           delete window[callbackName];
           document.head.removeChild(script);
-          reject(new Error("No se pudo conectar con Apps Script"));
+          reject(new Error("Error conectando con Apps Script"));
         };
         document.head.appendChild(script);
       });
@@ -430,75 +431,88 @@
       }
     }
 
-    // ENVÍO INMUNE A CORS: USA mode: 'no-cors'
-    async function enviarFormulario(tipo) {
-      const btn = document.getElementById(tipo === 'fija' ? 'btnGuardarFija' : 'btnGuardarMovil');
-      const originalText = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>Guardando en Sheets...`;
+    // ACCIÓN INTEGRADA: GUARDA (SOBREESCRIBIENDO) Y OPCIONALMENTE DESCARGA
+    async function ejecutarAccionFija(accion) {
+      const payload = {
+        ffvv: document.getElementById('fija_ffvv').value,
+        correo: document.getElementById('fija_correo').value,
+        ruc: document.getElementById('fija_ruc').value,
+        razonSocial: document.getElementById('fija_razon').value,
+        servicio: document.getElementById('fija_servicio').value,
+        plan: document.getElementById('fija_plan').value,
+        cf: document.getElementById('fija_cf').value,
+        promocion: document.getElementById('fija_promocion').value,
+        plano: document.getElementById('fija_plano').value,
+        dirInstalacion: document.getElementById('fija_dir').value,
+        departamento: document.getElementById('fija_dep').value,
+        provincia: document.getElementById('fija_prov').value,
+        distrito: document.getElementById('fija_dist').value,
+        referencia: document.getElementById('fija_ref').value,
+        coordenadas: document.getElementById('fija_coordenadas').value,
+        rrllNombre: document.getElementById('fija_rrll_nombre').value,
+        rrllDni: document.getElementById('fija_rrll_dni').value,
+        rrllTel: document.getElementById('fija_rrll_tel').value,
+        contactoNombre: document.getElementById('fija_cto_nombre').value,
+        contactoDni: document.getElementById('fija_cto_dni').value,
+        contactoTel1: document.getElementById('fija_cto_tel1').value
+      };
 
-      let payload = {};
-      let action = tipo === 'fija' ? 'guardarFija' : 'guardarMovil';
-
-      if (tipo === 'fija') {
-        payload = {
-          ffvv: document.getElementById('fija_ffvv').value,
-          correo: document.getElementById('fija_correo').value,
-          ruc: document.getElementById('fija_ruc').value,
-          razonSocial: document.getElementById('fija_razon').value,
-          servicio: document.getElementById('fija_servicio').value,
-          plan: document.getElementById('fija_plan').value,
-          cf: document.getElementById('fija_cf').value,
-          promocion: document.getElementById('fija_promocion').value,
-          plano: document.getElementById('fija_plano').value,
-          dirInstalacion: document.getElementById('fija_dir').value,
-          departamento: document.getElementById('fija_dep').value,
-          provincia: document.getElementById('fija_prov').value,
-          distrito: document.getElementById('fija_dist').value,
-          referencia: document.getElementById('fija_ref').value,
-          coordenadas: document.getElementById('fija_coordenadas').value,
-          rrllNombre: document.getElementById('fija_rrll_nombre').value,
-          rrllDni: document.getElementById('fija_rrll_dni').value,
-          rrllTel: document.getElementById('fija_rrll_tel').value,
-          contactoNombre: document.getElementById('fija_cto_nombre').value,
-          contactoDni: document.getElementById('fija_cto_dni').value,
-          contactoTel1: document.getElementById('fija_cto_tel1').value
-        };
-      } else {
-        payload = {
-          ffvv: document.getElementById('movil_ffvv').value,
-          codigoLarge: document.getElementById('movil_codigo').value,
-          ruc: document.getElementById('movil_ruc').value,
-          razonSocial: document.getElementById('movil_razon').value,
-          dirEntrega: document.getElementById('movil_dir').value,
-          departamento: document.getElementById('movil_dep').value,
-          provincia: document.getElementById('movil_prov').value,
-          distrito: document.getElementById('movil_dist').value,
-          referencia: document.getElementById('movil_ref').value
-        };
-      }
+      showToast("Borrando datos viejos y guardando los nuevos...", 'bg-warning');
 
       try {
         await fetch(API_URL, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({ action, payload })
+          body: JSON.stringify({ action: 'guardarFija', payload })
         });
-        showToast(tipo === 'fija' ? "¡Ficha PDV - FIJA guardada en Google Sheets!" : "¡Ficha PDV - MOVIL guardada en Google Sheets!", 'bg-success');
+
+        if (accion === 'guardar') {
+          showToast("¡Datos viejos borrados y nueva ficha guardada en Google Sheets!", 'bg-success');
+        } else if (accion === 'descargar') {
+          showToast("Generando y descargando Excel con los nuevos datos...", 'bg-info');
+          setTimeout(() => descargarXlsxDirecto('FIJA'), 1200);
+        }
       } catch (err) {
-        showToast("Error de conexión: " + err.message, 'bg-danger');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalText;
+        showToast("Error al procesar: " + err.message, 'bg-danger');
+      }
+    }
+
+    async function ejecutarAccionMovil(accion) {
+      const payload = {
+        ffvv: document.getElementById('movil_ffvv').value,
+        codigoLarge: document.getElementById('movil_codigo').value,
+        ruc: document.getElementById('movil_ruc').value,
+        razonSocial: document.getElementById('movil_razon').value,
+        dirEntrega: document.getElementById('movil_dir').value,
+        departamento: document.getElementById('movil_dep').value,
+        provincia: document.getElementById('movil_prov').value,
+        distrito: document.getElementById('movil_dist').value,
+        referencia: document.getElementById('movil_ref').value
+      };
+
+      showToast("Borrando datos viejos y guardando los nuevos...", 'bg-warning');
+
+      try {
+        await fetch(API_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ action: 'guardarMovil', payload })
+        });
+
+        if (accion === 'guardar') {
+          showToast("¡PDV - MOVIL actualizada con los nuevos datos!", 'bg-success');
+        } else if (accion === 'descargar') {
+          showToast("Descargando libro Excel actualizado...", 'bg-info');
+          setTimeout(() => descargarXlsxDirecto('MOVIL'), 1200);
+        }
+      } catch (err) {
+        showToast("Error al procesar: " + err.message, 'bg-danger');
       }
     }
 
     async function enviarLinea() {
-      const btn = document.getElementById('btnGuardarLinea');
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>Guardando...`;
-
       const hoja = document.getElementById('linea_hoja').value;
       const payload = {
         linea: document.getElementById('linea_numero').value,
@@ -516,24 +530,31 @@
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify({ action: 'agregarLinea', hoja, payload })
         });
-        showToast(`¡Línea guardada exitosamente en ${hoja}!`, 'bg-success');
+        showToast(`Línea insertada en ${hoja}`, 'bg-success');
         document.getElementById('linea_numero').value = '';
       } catch (err) {
-        showToast("Error al guardar: " + err.message, 'bg-danger');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="bi bi-plus-circle me-1"></i>Insertar Línea en la Hoja`;
+        showToast("Error: " + err.message, 'bg-danger');
       }
     }
 
-    function irADescargas() {
-      const tab = new bootstrap.Tab(document.querySelector('button[data-bs-target="#tab-descargas"]'));
-      tab.show();
+    async function borrarLineasDeHoja() {
+      const hoja = document.getElementById('linea_hoja').value;
+      if (!confirm(`¿Estás seguro de borrar todas las líneas registradas en ${hoja}?`)) return;
+
+      try {
+        await fetch(API_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ action: 'limpiarLineas', hoja })
+        });
+        showToast(`Tabla de ${hoja} limpiada por completo.`, 'bg-info');
+      } catch (err) {
+        showToast("Error al limpiar: " + err.message, 'bg-danger');
+      }
     }
 
-    // DESCARGAS DIRECTAS: Abren en nueva pestaña y descargan automáticamente el .xlsx
     function descargarXlsxDirecto(tipo) {
-      showToast("Generando archivo Excel (.xlsx)...", 'bg-info');
       const url = `${API_URL}?action=descargarXlsx&tipo=${tipo}`;
       window.open(url, '_blank');
     }
@@ -541,7 +562,6 @@
     function descargarXlsxMovilPersonalizado() {
       const incPorta = document.getElementById('chk_porta').checked;
       const incAlta = document.getElementById('chk_alta').checked;
-      showToast("Generando libro móvil consolidado (.xlsx)...", 'bg-info');
       const url = `${API_URL}?action=descargarXlsx&tipo=MOVIL&incluirPorta=${incPorta}&incluirAlta=${incAlta}`;
       window.open(url, '_blank');
     }
