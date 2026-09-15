@@ -3,322 +3,686 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Ventas SISACT - NETORA SRL</title>
+  <title>NETORA SRL | Portal de Gestión SISACT</title>
+  
+  <!-- Tipografía & Iconos -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
   <style>
-    body { background-color: #f0f2f5; font-size: 13.5px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    .main-card { max-width: 840px; margin: 25px auto; border: none; border-radius: 14px; box-shadow: 0 4px 25px rgba(0,0,0,0.07); }
-    .card-header { background: linear-gradient(135deg, #d32f2f, #b71c1c); color: white; border-radius: 14px 14px 0 0 !important; padding: 18px 24px; }
-    .nav-tabs .nav-link { font-weight: 600; color: #495057; border-top-left-radius: 8px; border-top-right-radius: 8px; font-size: 13px; }
-    .nav-tabs .nav-link.active { color: #d32f2f; border-bottom: 3px solid #d32f2f; }
-    .form-section-title { font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: #6c757d; margin-top: 16px; margin-bottom: 8px; letter-spacing: 0.5px; }
-    .btn-action { font-weight: 600; padding: 9px 16px; }
-    .export-box { border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; background: #fafbfc; margin-bottom: 16px; }
-    .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1055; }
-    .badge-api { font-size: 11px; padding: 5px 10px; border-radius: 20px; }
+    :root {
+      --primary-color: #e11d48;
+      --primary-hover: #be123c;
+      --brand-dark: #0f172a;
+      --brand-slate: #1e293b;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --text-muted: #64748b;
+      --input-bg: #f8fafc;
+      --input-focus: #ffffff;
+    }
+
+    body {
+      background: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      color: #1e293b;
+      font-size: 13.5px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* BARRA DE NAVEGACIÓN SUPERIOR */
+    .top-navbar {
+      background: var(--brand-dark);
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .brand-logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-avatar {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #e11d48, #be123c);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      box-shadow: 0 4px 12px rgba(225, 29, 72, 0.35);
+    }
+    .brand-name {
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 17px;
+      letter-spacing: -0.3px;
+      margin: 0;
+      line-height: 1.2;
+    }
+    .brand-tagline {
+      color: #94a3b8;
+      font-size: 11px;
+      margin: 0;
+      font-weight: 500;
+    }
+
+    /* BADGE DE CONEXIÓN */
+    .connection-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 600;
+      transition: all 0.25s ease;
+      background: rgba(255, 255, 255, 0.07);
+      color: #cbd5e1;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* CONTENEDOR CENTRAL */
+    .main-wrapper {
+      max-width: 900px;
+      margin: 28px auto;
+      padding: 0 16px;
+    }
+
+    /* PESTAÑAS MODERNAS */
+    .nav-pills-custom {
+      background: #ffffff;
+      padding: 6px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      gap: 6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      margin-bottom: 24px;
+    }
+    .nav-pills-custom .nav-link {
+      flex: 1;
+      text-align: center;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-weight: 600;
+      font-size: 12.5px;
+      color: #64748b;
+      border: none;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .nav-pills-custom .nav-link:hover {
+      color: #1e293b;
+      background: #f8fafc;
+    }
+    .nav-pills-custom .nav-link.active {
+      background: var(--brand-dark);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    }
+    .nav-pills-custom .nav-link.active-export {
+      background: #059669;
+      color: white;
+    }
+
+    /* TARJETA DEL FORMULARIO */
+    .form-box {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      padding: 24px 28px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+      margin-bottom: 24px;
+    }
+
+    /* SECCIONES Y ETIQUETAS */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 22px 0 14px 0;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border-color);
+    }
+    .section-divider-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      background: #ffe4e6;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+    .section-divider-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--brand-slate);
+      margin: 0;
+    }
+
+    /* INPUTS & SELECTS ESTILIZADOS */
+    .form-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 5px;
+    }
+    .form-control, .form-select {
+      background-color: var(--input-bg);
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 12.5px;
+      padding: 8px 12px;
+      color: #0f172a;
+      transition: all 0.2s ease;
+    }
+    .form-control:focus, .form-select:focus {
+      background-color: var(--input-focus);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.12);
+      outline: none;
+    }
+    .form-control::placeholder {
+      color: #94a3b8;
+    }
+
+    /* BOTONES DE ACCIÓN */
+    .btn-main-submit {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+      color: white;
+      border: none;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 11px 20px;
+      border-radius: 10px;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 14px rgba(225, 29, 72, 0.25);
+    }
+    .btn-main-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(225, 29, 72, 0.35);
+      color: white;
+    }
+    .btn-download-direct {
+      background: #f8fafc;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 11px 18px;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+    }
+    .btn-download-direct:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    /* TARJETAS DEL CENTRO DE DESCARGAS */
+    .download-card {
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      background: #f8fafc;
+      transition: all 0.2s ease;
+      margin-bottom: 18px;
+    }
+    .download-card:hover {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    }
+    .download-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+    .download-icon-fija { background: #dbeafe; color: #2563eb; }
+    .download-icon-movil { background: #fee2e2; color: #dc2626; }
+
+    /* SWITCH CUSTOM */
+    .form-switch .form-check-input {
+      width: 2.2em;
+      height: 1.2em;
+      cursor: pointer;
+    }
+    .form-switch .form-check-input:checked {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    /* TOAST DE ESTADO FLOTANTE */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1060;
+    }
+    .toast-custom {
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 12px 18px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
   </style>
 </head>
 <body>
 
-  <div class="container pb-4">
-    <div class="card main-card">
-      
-      <!-- HEADER -->
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <div>
-          <h5 class="mb-0 fw-bold"><i class="bi bi-broadcast-pin me-2"></i>NETORA SRL - Sistema SISACT</h5>
-          <small class="text-white-50">Llenado Comercial, Sobreescritura & Descarga XLSX</small>
+  <!-- BARRA DE ENCABEZADO -->
+  <header class="top-navbar">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="brand-logo-container">
+        <div class="brand-avatar">
+          <i class="bi bi-broadcast"></i>
         </div>
-        <span class="badge bg-warning text-dark badge-api" id="apiStatus">
-          <i class="bi bi-hourglass-split me-1"></i>Cargando Ubigeo...
+        <div>
+          <h1 class="brand-name">NETORA SRL</h1>
+          <p class="brand-tagline">Distribuidor Autorizado Claro Negocios • SISACT Direct</p>
+        </div>
+      </div>
+      <div>
+        <span class="connection-badge" id="apiStatus">
+          <span class="pulse-dot"></span>
+          <span>Sincronizando Sheets...</span>
         </span>
       </div>
+    </div>
+  </header>
 
-      <div class="card-body p-4">
-        
-        <ul class="nav nav-tabs mb-4" id="mainTab" role="tablist">
-          <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-fija"><i class="bi bi-house-door me-1"></i>PDV - FIJA</button></li>
-          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-movil"><i class="bi bi-phone me-1"></i>PDV - MOVIL</button></li>
-          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-lineas"><i class="bi bi-sim me-1"></i>Portabilidad / Altas</button></li>
-          <li class="nav-item"><button class="nav-link text-success fw-bold" data-bs-toggle="tab" data-bs-target="#tab-descargas"><i class="bi bi-file-earmark-excel me-1"></i>Descargas XLSX</button></li>
-        </ul>
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="main-wrapper">
+    
+    <!-- PESTAÑAS DE NAVEGACIÓN -->
+    <nav class="nav-pills-custom" id="mainTab" role="tablist">
+      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-fija">
+        <i class="bi bi-router"></i> Fija (FTTH)
+      </button>
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-movil">
+        <i class="bi bi-phone"></i> Móvil Corporativo
+      </button>
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-lineas">
+        <i class="bi bi-sim"></i> Portas / Altas
+      </button>
+      <button class="nav-link text-success" data-bs-toggle="tab" data-bs-target="#tab-descargas">
+        <i class="bi bi-file-earmark-excel"></i> Exportar XLSX
+      </button>
+    </nav>
 
-        <div class="tab-content">
+    <div class="tab-content">
 
-          <!-- 1. PDV - FIJA -->
-          <div class="tab-pane fade show active" id="tab-fija">
-            <form id="formFija" onsubmit="event.preventDefault(); ejecutarAccionFija('guardar');">
-              <div class="row g-2">
-                <div class="col-md-6">
-                  <label class="form-label">Asesor FFVV</label>
-                  <input type="text" id="fija_ffvv" class="form-control" placeholder="Ej: Manuel Perez Godoy" required>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Correo Electrónico</label>
-                  <input type="email" id="fija_correo" class="form-control" placeholder="cliente@correo.com">
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">RUC</label>
-                  <input type="text" id="fija_ruc" class="form-control" maxlength="11" placeholder="10 / 20..." required>
-                </div>
-                <div class="col-md-8">
-                  <label class="form-label">Razón Social</label>
-                  <input type="text" id="fija_razon" class="form-control" placeholder="Nombre comercial o titular" required>
-                </div>
+      <!-- =================================================================== -->
+      <!-- TAB 1: PDV - FIJA -->
+      <!-- =================================================================== -->
+      <div class="tab-pane fade show active" id="tab-fija">
+        <div class="form-box">
+          <form id="formFija" onsubmit="event.preventDefault(); ejecutarAccionFija('guardar');">
+            
+            <!-- SECCIÓN 1 -->
+            <div class="section-divider" style="margin-top: 0;">
+              <div class="section-divider-icon"><i class="bi bi-person-badge"></i></div>
+              <h2 class="section-divider-title">1. Asesor Comercial & Entidad del Cliente</h2>
+            </div>
+            <div class="row g-2">
+              <div class="col-md-6">
+                <label class="form-label">Asesor FFVV</label>
+                <input type="text" id="fija_ffvv" class="form-control" placeholder="Ej: Manuel Perez Godoy" required>
               </div>
-
-              <div class="form-section-title">Detalles del Servicio & Promoción</div>
-              <div class="row g-2">
-                <div class="col-md-6">
-                  <label class="form-label">Servicio</label>
-                  <input type="text" id="fija_servicio" class="form-control" value="2 PLAY 400 Mbps">
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Plan Técnico</label>
-                  <input type="text" id="fija_plan" class="form-control" value="INTERNET + TV CLARO ESTANDAR PRO">
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Cargo Fijo Mensual</label>
-                  <input type="text" id="fija_cf" class="form-control" value="S/ 170.00">
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Promoción</label>
-                  <input type="text" id="fija_promocion" class="form-control" value="S/. 109.00 X 6 MESES">
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Plano SISACT</label>
-                  <input type="text" id="fija_plano" class="form-control" placeholder="Ej: LMSC122-S">
-                </div>
+              <div class="col-md-6">
+                <label class="form-label">Correo Electrónico (SISACT)</label>
+                <input type="email" id="fija_correo" class="form-control" placeholder="cliente@correo.com">
               </div>
-
-              <div class="form-section-title">Ubicación de Instalación (Desde DEP_PROV_DIST)</div>
-              <div class="row g-2">
-                <div class="col-md-12">
-                  <label class="form-label">Dirección de Instalación</label>
-                  <input type="text" id="fija_dir" class="form-control" placeholder="Calle / Jr / Av, Número, Mz, Lote" required>
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Departamento</label>
-                  <select id="fija_dep" class="form-select" onchange="cargarProvincias('fija')" required>
-                    <option value="">Cargando departamentos...</option>
-                  </select>
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Provincia</label>
-                  <select id="fija_prov" class="form-select" onchange="cargarDistritos('fija')" required>
-                    <option value="">Seleccione provincia...</option>
-                  </select>
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Distrito</label>
-                  <select id="fija_dist" class="form-select" required>
-                    <option value="">Seleccione distrito...</option>
-                  </select>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Referencia</label>
-                  <input type="text" id="fija_ref" class="form-control" placeholder="Ej: Frente a comisaría / parque">
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Coordenadas GPS</label>
-                  <input type="text" id="fija_coordenadas" class="form-control" placeholder="-12.09611 / -76.972836">
-                </div>
+              <div class="col-md-4">
+                <label class="form-label">RUC (11 dígitos)</label>
+                <input type="text" id="fija_ruc" class="form-control" maxlength="11" placeholder="10 / 20..." required>
               </div>
-
-              <div class="form-section-title">Contactos de Instalación</div>
-              <div class="row g-2">
-                <div class="col-md-6">
-                  <label class="form-label">Nombre del RRLL</label>
-                  <input type="text" id="fija_rrll_nombre" class="form-control">
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">DNI RRLL</label>
-                  <input type="text" id="fija_rrll_dni" class="form-control" maxlength="8">
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Teléfono RRLL</label>
-                  <input type="text" id="fija_rrll_tel" class="form-control">
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Nombre Contacto Instalación</label>
-                  <input type="text" id="fija_cto_nombre" class="form-control">
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">DNI Contacto</label>
-                  <input type="text" id="fija_cto_dni" class="form-control" maxlength="8">
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Teléfono Contacto</label>
-                  <input type="text" id="fija_cto_tel1" class="form-control">
-                </div>
+              <div class="col-md-8">
+                <label class="form-label">Razón Social / Nombre Comercial</label>
+                <input type="text" id="fija_razon" class="form-control" placeholder="Nombre de la empresa o titular" required>
               </div>
-
-              <div class="d-flex gap-2 mt-4">
-                <button type="submit" class="btn btn-primary btn-action flex-grow-1" id="btnGuardarFija">
-                  <i class="bi bi-cloud-arrow-up me-1"></i>Guardar y Sobreescribir en Sheets
-                </button>
-                <button type="button" class="btn btn-outline-success btn-action" onclick="ejecutarAccionFija('descargar')">
-                  <i class="bi bi-download me-1"></i>Guardar y Descargar .xlsx
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <!-- 2. PDV - MOVIL -->
-          <div class="tab-pane fade" id="tab-movil">
-            <form id="formMovil" onsubmit="event.preventDefault(); ejecutarAccionMovil('guardar');">
-              <div class="row g-2">
-                <div class="col-md-6">
-                  <label class="form-label">Asesor FFVV</label>
-                  <input type="text" id="movil_ffvv" class="form-control" required>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Código Large</label>
-                  <input type="text" id="movil_codigo" class="form-control">
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">RUC</label>
-                  <input type="text" id="movil_ruc" class="form-control" maxlength="11" required>
-                </div>
-                <div class="col-md-8">
-                  <label class="form-label">Razón Social</label>
-                  <input type="text" id="movil_razon" class="form-control" required>
-                </div>
-              </div>
-
-              <div class="form-section-title">Lugar de Entrega (Desde DEP_PROV_DIST)</div>
-              <div class="row g-2">
-                <div class="col-md-12">
-                  <label class="form-label">Dirección de Entrega</label>
-                  <input type="text" id="movil_dir" class="form-control" required>
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Departamento</label>
-                  <select id="movil_dep" class="form-select" onchange="cargarProvincias('movil')" required>
-                    <option value="">Cargando departamentos...</option>
-                  </select>
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Provincia</label>
-                  <select id="movil_prov" class="form-select" onchange="cargarDistritos('movil')" required>
-                    <option value="">Seleccione Provincia...</option>
-                  </select>
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Distrito</label>
-                  <select id="movil_dist" class="form-select" required>
-                    <option value="">Seleccione Distrito...</option>
-                  </select>
-                </div>
-                <div class="col-md-12">
-                  <label class="form-label">Referencia de Entrega</label>
-                  <input type="text" id="movil_ref" class="form-control">
-                </div>
-              </div>
-
-              <div class="d-flex gap-2 mt-4">
-                <button type="submit" class="btn btn-danger btn-action flex-grow-1" id="btnGuardarMovil">
-                  <i class="bi bi-cloud-arrow-up me-1"></i>Guardar y Sobreescribir en PDV - MOVIL
-                </button>
-                <button type="button" class="btn btn-outline-success btn-action" onclick="ejecutarAccionMovil('descargar')">
-                  <i class="bi bi-download me-1"></i>Guardar y Descargar .xlsx
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <!-- 3. PORTABILIDAD / ALTAS -->
-          <div class="tab-pane fade" id="tab-lineas">
-            <form id="formLinea" onsubmit="event.preventDefault(); enviarLinea();">
-              <div class="row g-2">
-                <div class="col-md-6">
-                  <label class="form-label">Hoja Destino</label>
-                  <select id="linea_hoja" class="form-select">
-                    <option value="HOJA 2 - PORTABILIDAD">HOJA 2 - PORTABILIDAD</option>
-                    <option value="HOJA 3 ALTA NUEVA">HOJA 3 ALTA NUEVA</option>
-                  </select>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Número Móvil</label>
-                  <input type="text" id="linea_numero" class="form-control" placeholder="9XXXXXXXX" maxlength="9" required>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Plan Tarifario</label>
-                  <input type="text" id="linea_plan" class="form-control" placeholder="Max Ilimitado 69.90" required>
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Cargo Fijo Regular</label>
-                  <input type="text" id="linea_cf" class="form-control" placeholder="69.90" required>
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">CF Final (Promoción)</label>
-                  <input type="text" id="linea_cffinal" class="form-control" placeholder="34.95">
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Equipo</label>
-                  <input type="text" id="linea_equipo" class="form-control" placeholder="Solo Chip o Modelo de Celular">
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Precio del Equipo (S/)</label>
-                  <input type="text" id="linea_precio" class="form-control" value="0">
-                </div>
-              </div>
-
-              <div class="d-flex gap-2 mt-4">
-                <button type="submit" class="btn btn-success btn-action flex-grow-1" id="btnGuardarLinea">
-                  <i class="bi bi-plus-circle me-1"></i>Insertar Línea
-                </button>
-                <button type="button" class="btn btn-outline-danger btn-action" onclick="borrarLineasDeHoja()">
-                  <i class="bi bi-trash me-1"></i>Limpiar tabla de líneas
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <!-- 4. CENTRO DE DESCARGAS XLSX -->
-          <div class="tab-pane fade" id="tab-descargas">
-            <div class="export-box">
-              <h6 class="fw-bold text-primary mb-1"><i class="bi bi-file-earmark-spreadsheet me-2"></i>PDV - FIJA (.xlsx)</h6>
-              <p class="text-muted small mb-3">Descarga directamente la ficha de instalación fija con los datos recién sobreescritos.</p>
-              <button class="btn btn-primary btn-sm w-100 fw-bold" onclick="descargarXlsxDirecto('FIJA')">
-                <i class="bi bi-download me-1"></i>Descargar PDV - FIJA (.xlsx)
-              </button>
             </div>
 
-            <div class="export-box">
-              <h6 class="fw-bold text-danger mb-1"><i class="bi bi-phone me-2"></i>PDV - MOVIL con Pestañas Vinculadas (.xlsx)</h6>
-              <p class="text-muted small mb-2">Empaqueta en el mismo libro Excel las hojas seleccionadas:</p>
+            <!-- SECCIÓN 2 -->
+            <div class="section-divider">
+              <div class="section-divider-icon"><i class="bi bi-tag"></i></div>
+              <h2 class="section-divider-title">2. Oferta Técnica & Campaña</h2>
+            </div>
+            <div class="row g-2">
+              <div class="col-md-6">
+                <label class="form-label">Servicio</label>
+                <input type="text" id="fija_servicio" class="form-control" value="2 PLAY 400 Mbps">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Plan Técnico</label>
+                <input type="text" id="fija_plan" class="form-control" value="INTERNET + TV CLARO ESTANDAR PRO">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Cargo Fijo Mensual</label>
+                <input type="text" id="fija_cf" class="form-control" value="S/ 170.00">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Promoción Aplicada</label>
+                <input type="text" id="fija_promocion" class="form-control" value="S/. 109.00 X 6 MESES">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Código de Plano</label>
+                <input type="text" id="fija_plano" class="form-control" placeholder="Ej: LMSC122-S">
+              </div>
+            </div>
 
-              <div class="form-check mb-1">
-                <input class="form-check-input" type="checkbox" checked disabled id="chk_base_movil">
-                <label class="form-check-label small" for="chk_base_movil">PDV - MOVIL (Ficha Principal)</label>
+            <!-- SECCIÓN 3 -->
+            <div class="section-divider">
+              <div class="section-divider-icon"><i class="bi bi-geo-alt"></i></div>
+              <h2 class="section-divider-title">3. Ubicación de Instalación (Ubigeo Oficial)</h2>
+            </div>
+            <div class="row g-2">
+              <div class="col-md-12">
+                <label class="form-label">Dirección Exacta</label>
+                <input type="text" id="fija_dir" class="form-control" placeholder="Av / Calle / Jr, Número, Mz, Lote, Urbanización" required>
               </div>
-              <div class="form-check mb-1">
-                <input class="form-check-input" type="checkbox" id="chk_porta">
-                <label class="form-check-label small" for="chk_porta">Incluir <strong>HOJA 2 - PORTABILIDAD</strong></label>
+              <div class="col-md-4">
+                <label class="form-label">Departamento</label>
+                <select id="fija_dep" class="form-select" onchange="cargarProvincias('fija')" required>
+                  <option value="">Cargando departamentos...</option>
+                </select>
               </div>
-              <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="chk_alta">
-                <label class="form-check-label small" for="chk_alta">Incluir <strong>HOJA 3 ALTA NUEVA</strong></label>
+              <div class="col-md-4">
+                <label class="form-label">Provincia</label>
+                <select id="fija_prov" class="form-select" onchange="cargarDistritos('fija')" required>
+                  <option value="">Seleccione provincia...</option>
+                </select>
               </div>
+              <div class="col-md-4">
+                <label class="form-label">Distrito</label>
+                <select id="fija_dist" class="form-select" required>
+                  <option value="">Seleccione distrito...</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Referencia del Predio</label>
+                <input type="text" id="fija_ref" class="form-control" placeholder="Ej: Frente al parque / al costado de la botica">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Coordenadas GPS</label>
+                <input type="text" id="fija_coordenadas" class="form-control" placeholder="-12.09611 / -76.972836">
+              </div>
+            </div>
 
-              <button class="btn btn-danger btn-sm w-100 fw-bold" onclick="descargarXlsxMovilPersonalizado()">
-                <i class="bi bi-download me-1"></i>Descargar Libro Móvil Consolidado (.xlsx)
+            <!-- SECCIÓN 4 -->
+            <div class="section-divider">
+              <div class="section-divider-icon"><i class="bi bi-person-vcard"></i></div>
+              <h2 class="section-divider-title">4. Representación Legal & Contacto en Sitio</h2>
+            </div>
+            <div class="row g-2">
+              <div class="col-md-6">
+                <label class="form-label">Nombre del RRLL</label>
+                <input type="text" id="fija_rrll_nombre" class="form-control">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">DNI RRLL</label>
+                <input type="text" id="fija_rrll_dni" class="form-control" maxlength="8">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Teléfono RRLL</label>
+                <input type="text" id="fija_rrll_tel" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Contacto Técnico en Instalación</label>
+                <input type="text" id="fija_cto_nombre" class="form-control">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">DNI Contacto</label>
+                <input type="text" id="fija_cto_dni" class="form-control" maxlength="8">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Teléfono Contacto</label>
+                <input type="text" id="fija_cto_tel1" class="form-control">
+              </div>
+            </div>
+
+            <!-- BOTONERA INFERIOR -->
+            <div class="d-flex flex-column flex-sm-row gap-2 mt-4 pt-3 border-top">
+              <button type="submit" class="btn btn-main-submit flex-grow-1" id="btnGuardarFija">
+                <i class="bi bi-arrow-repeat me-1"></i> Sobreescribir Ficha en Sheets
+              </button>
+              <button type="button" class="btn btn-download-direct" onclick="ejecutarAccionFija('descargar')">
+                <i class="bi bi-file-earmark-arrow-down text-success me-1"></i> Guardar y Descargar .xlsx
               </button>
             </div>
-          </div>
-
+          </form>
         </div>
       </div>
-    </div>
-  </div>
 
+      <!-- =================================================================== -->
+      <!-- TAB 2: PDV - MOVIL -->
+      <!-- =================================================================== -->
+      <div class="tab-pane fade" id="tab-movil">
+        <div class="form-box">
+          <form id="formMovil" onsubmit="event.preventDefault(); ejecutarAccionMovil('guardar');">
+            
+            <div class="section-divider" style="margin-top: 0;">
+              <div class="section-divider-icon"><i class="bi bi-phone"></i></div>
+              <h2 class="section-divider-title">1. Datos del Solicitante Móvil</h2>
+            </div>
+            <div class="row g-2">
+              <div class="col-md-6">
+                <label class="form-label">Asesor FFVV</label>
+                <input type="text" id="movil_ffvv" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Código Large</label>
+                <input type="text" id="movil_codigo" class="form-control" placeholder="Ej: CLAR-8839">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">RUC (11 dígitos)</label>
+                <input type="text" id="movil_ruc" class="form-control" maxlength="11" required>
+              </div>
+              <div class="col-md-8">
+                <label class="form-label">Razón Social</label>
+                <input type="text" id="movil_razon" class="form-control" required>
+              </div>
+            </div>
+
+            <div class="section-divider">
+              <div class="section-divider-icon"><i class="bi bi-truck"></i></div>
+              <h2 class="section-divider-title">2. Despacho & Entrega de Terminales</h2>
+            </div>
+            <div class="row g-2">
+              <div class="col-md-12">
+                <label class="form-label">Dirección de Entrega</label>
+                <input type="text" id="movil_dir" class="form-control" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Departamento</label>
+                <select id="movil_dep" class="form-select" onchange="cargarProvincias('movil')" required>
+                  <option value="">Cargando departamentos...</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Provincia</label>
+                <select id="movil_prov" class="form-select" onchange="cargarDistritos('movil')" required>
+                  <option value="">Seleccione Provincia...</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Distrito</label>
+                <select id="movil_dist" class="form-select" required>
+                  <option value="">Seleccione Distrito...</option>
+                </select>
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Referencia de Despacho</label>
+                <input type="text" id="movil_ref" class="form-control">
+              </div>
+            </div>
+
+            <div class="d-flex flex-column flex-sm-row gap-2 mt-4 pt-3 border-top">
+              <button type="submit" class="btn btn-main-submit flex-grow-1" id="btnGuardarMovil">
+                <i class="bi bi-arrow-repeat me-1"></i> Sobreescribir PDV - MOVIL
+              </button>
+              <button type="button" class="btn btn-download-direct" onclick="ejecutarAccionMovil('descargar')">
+                <i class="bi bi-file-earmark-arrow-down text-danger me-1"></i> Guardar y Descargar .xlsx
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- TAB 3: PORTAS / ALTAS -->
+      <!-- =================================================================== -->
+      <div class="tab-pane fade" id="tab-lineas">
+        <div class="form-box">
+          <form id="formLinea" onsubmit="event.preventDefault(); enviarLinea();">
+            <div class="section-divider" style="margin-top: 0;">
+              <div class="section-divider-icon"><i class="bi bi-sim-fill"></i></div>
+              <h2 class="section-divider-title">Registrar Línea en Matriz</h2>
+            </div>
+            
+            <div class="row g-2">
+              <div class="col-md-6">
+                <label class="form-label">Hoja de Destino</label>
+                <select id="linea_hoja" class="form-select fw-semibold">
+                  <option value="HOJA 2 - PORTABILIDAD">HOJA 2 - PORTABILIDAD</option>
+                  <option value="HOJA 3 ALTA NUEVA">HOJA 3 ALTA NUEVA</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Número Móvil</label>
+                <input type="text" id="linea_numero" class="form-control fw-bold" placeholder="9XXXXXXXX" maxlength="9" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Plan Tarifario</label>
+                <input type="text" id="linea_plan" class="form-control" placeholder="Ej: Max Negocios 69.90" required>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Cargo Fijo S/</label>
+                <input type="text" id="linea_cf" class="form-control" placeholder="69.90" required>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">CF Final S/</label>
+                <input type="text" id="linea_cffinal" class="form-control" placeholder="34.95">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Equipo / Terminal</label>
+                <input type="text" id="linea_equipo" class="form-control" placeholder="Solo Chip o Modelo de Celular">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Costo del Equipo S/</label>
+                <input type="text" id="linea_precio" class="form-control" value="0">
+              </div>
+            </div>
+
+            <div class="d-flex flex-column flex-sm-row gap-2 mt-4 pt-3 border-top">
+              <button type="submit" class="btn btn-success btn-main-submit flex-grow-1" id="btnGuardarLinea">
+                <i class="bi bi-plus-circle me-1"></i> Añadir Línea a la Hoja
+              </button>
+              <button type="button" class="btn btn-outline-danger btn-download-direct" onclick="borrarLineasDeHoja()">
+                <i class="bi bi-trash3 me-1"></i> Vaciar Tabla de Líneas
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- TAB 4: CENTRO DE DESCARGAS XLSX -->
+      <!-- =================================================================== -->
+      <div class="tab-pane fade" id="tab-descargas">
+        <div class="form-box">
+          <div class="section-divider" style="margin-top: 0;">
+            <div class="section-divider-icon"><i class="bi bi-cloud-download"></i></div>
+            <h2 class="section-divider-title">Centro de Exportación de Archivos Excel (.xlsx)</h2>
+          </div>
+          
+          <div class="row g-3">
+            <!-- TARJETA FIJA -->
+            <div class="col-md-6">
+              <div class="download-card h-100 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="download-icon download-icon-fija">
+                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                  </div>
+                  <h3 class="h6 fw-bold mb-1">PDV - FIJA Individual</h3>
+                  <p class="text-muted small">Genera el archivo de Excel oficial que contiene únicamente la ficha técnica de instalación fija sobreescrita.</p>
+                </div>
+                <button class="btn btn-primary w-100 btn-download-direct mt-3 fw-bold" onclick="descargarXlsxDirecto('FIJA')">
+                  <i class="bi bi-download me-1"></i> Descargar PDV - FIJA (.xlsx)
+                </button>
+              </div>
+            </div>
+
+            <!-- TARJETA MOVIL CONDICIONAL -->
+            <div class="col-md-6">
+              <div class="download-card h-100 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="download-icon download-icon-movil">
+                    <i class="bi bi-phone-vibrate"></i>
+                  </div>
+                  <h3 class="h6 fw-bold mb-1">PDV - MOVIL Empaquetado</h3>
+                  <p class="text-muted small mb-3">Descarga la ficha móvil y activa qué hojas secundarias anexar en el <strong>mismo libro de cálculo</strong>:</p>
+
+                  <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="chk_porta">
+                    <label class="form-check-label small fw-semibold" for="chk_porta">Incluir <strong>HOJA 2 - PORTABILIDAD</strong></label>
+                  </div>
+                  <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" id="chk_alta">
+                    <label class="form-check-label small fw-semibold" for="chk_alta">Incluir <strong>HOJA 3 ALTA NUEVA</strong></label>
+                  </div>
+                </div>
+
+                <button class="btn btn-danger w-100 btn-download-direct mt-3 fw-bold" onclick="descargarXlsxMovilPersonalizado()">
+                  <i class="bi bi-download me-1"></i> Descargar Libro Móvil (.xlsx)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- TOAST DE NOTIFICACIÓN FLOTANTE -->
   <div class="toast-container">
-    <div id="statusToast" class="toast align-items-center text-white bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="d-flex">
-        <div class="toast-body" id="toastMessage">Iniciando...</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    <div id="statusToast" class="toast toast-custom align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex align-items-center">
+        <div class="fs-5 me-2" id="toastIcon"><i class="bi bi-info-circle"></i></div>
+        <div class="toast-body p-0 fw-medium small" id="toastMessage">Procesando...</div>
+        <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="toast"></button>
       </div>
     </div>
   </div>
@@ -333,11 +697,19 @@
       cargarUbigeoDesdeSheets();
     });
 
-    function showToast(msg, bgClass = 'bg-primary') {
+    function showToast(msg, tipo = 'info') {
       const toastEl = document.getElementById('statusToast');
       const toastMsg = document.getElementById('toastMessage');
-      toastEl.className = `toast align-items-center text-white ${bgClass} border-0`;
+      const toastIcon = document.getElementById('toastIcon');
+
+      let iconHtml = '<i class="bi bi-info-circle text-info"></i>';
+      if (tipo === 'success') iconHtml = '<i class="bi bi-check-circle-fill text-success"></i>';
+      if (tipo === 'warning') iconHtml = '<i class="bi bi-hourglass-split text-warning"></i>';
+      if (tipo === 'danger') iconHtml = '<i class="bi bi-exclamation-triangle-fill text-danger"></i>';
+
+      toastIcon.innerHTML = iconHtml;
       toastMsg.innerText = msg;
+
       const toast = new bootstrap.Toast(toastEl, { delay: 4500 });
       toast.show();
     }
@@ -359,8 +731,10 @@
             return;
           }
         } catch (errJsonp) {
-          document.getElementById('apiStatus').className = 'badge bg-danger badge-api';
-          document.getElementById('apiStatus').innerHTML = '<i class="bi bi-x-circle-fill text-white me-1"></i>Error en Ubigeo';
+          document.getElementById('apiStatus').innerHTML = `
+            <span style="width:8px;height:8px;border-radius:50%;background:#ef4444;"></span>
+            <span class="text-danger">Error de Conexión</span>
+          `;
         }
       }
     }
@@ -378,7 +752,7 @@
         script.onerror = function() {
           delete window[callbackName];
           document.head.removeChild(script);
-          reject(new Error("Error conectando con Apps Script"));
+          reject(new Error("Error en JSONP"));
         };
         document.head.appendChild(script);
       });
@@ -398,8 +772,10 @@
         depMovil.add(new Option(dep, dep));
       });
 
-      document.getElementById('apiStatus').className = 'badge bg-success badge-api';
-      document.getElementById('apiStatus').innerHTML = `<i class="bi bi-check-circle-fill text-white me-1"></i>${departamentos.length} Departamentos listos`;
+      document.getElementById('apiStatus').innerHTML = `
+        <span class="pulse-dot"></span>
+        <span class="text-success">${departamentos.length} Departamentos listos</span>
+      `;
     }
 
     function cargarProvincias(prefijo) {
@@ -431,7 +807,6 @@
       }
     }
 
-    // ACCIÓN INTEGRADA: GUARDA (SOBREESCRIBIENDO) Y OPCIONALMENTE DESCARGA
     async function ejecutarAccionFija(accion) {
       const payload = {
         ffvv: document.getElementById('fija_ffvv').value,
@@ -457,7 +832,7 @@
         contactoTel1: document.getElementById('fija_cto_tel1').value
       };
 
-      showToast("Borrando datos viejos y guardando los nuevos...", 'bg-warning');
+      showToast("Borrando datos viejos y sobreescribiendo ficha...", 'warning');
 
       try {
         await fetch(API_URL, {
@@ -468,13 +843,13 @@
         });
 
         if (accion === 'guardar') {
-          showToast("¡Datos viejos borrados y nueva ficha guardada en Google Sheets!", 'bg-success');
+          showToast("¡Ficha PDV - FIJA actualizada con éxito en Sheets!", 'success');
         } else if (accion === 'descargar') {
-          showToast("Generando y descargando Excel con los nuevos datos...", 'bg-info');
+          showToast("Generando y descargando Excel con los nuevos datos...", 'info');
           setTimeout(() => descargarXlsxDirecto('FIJA'), 1200);
         }
       } catch (err) {
-        showToast("Error al procesar: " + err.message, 'bg-danger');
+        showToast("Error al procesar: " + err.message, 'danger');
       }
     }
 
@@ -491,7 +866,7 @@
         referencia: document.getElementById('movil_ref').value
       };
 
-      showToast("Borrando datos viejos y guardando los nuevos...", 'bg-warning');
+      showToast("Borrando datos viejos y sobreescribiendo ficha...", 'warning');
 
       try {
         await fetch(API_URL, {
@@ -502,13 +877,13 @@
         });
 
         if (accion === 'guardar') {
-          showToast("¡PDV - MOVIL actualizada con los nuevos datos!", 'bg-success');
+          showToast("¡Ficha PDV - MOVIL actualizada con éxito en Sheets!", 'success');
         } else if (accion === 'descargar') {
-          showToast("Descargando libro Excel actualizado...", 'bg-info');
+          showToast("Descargando libro Excel actualizado...", 'info');
           setTimeout(() => descargarXlsxDirecto('MOVIL'), 1200);
         }
       } catch (err) {
-        showToast("Error al procesar: " + err.message, 'bg-danger');
+        showToast("Error al procesar: " + err.message, 'danger');
       }
     }
 
@@ -530,16 +905,16 @@
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify({ action: 'agregarLinea', hoja, payload })
         });
-        showToast(`Línea insertada en ${hoja}`, 'bg-success');
+        showToast(`Línea insertada exitosamente en ${hoja}`, 'success');
         document.getElementById('linea_numero').value = '';
       } catch (err) {
-        showToast("Error: " + err.message, 'bg-danger');
+        showToast("Error al guardar: " + err.message, 'danger');
       }
     }
 
     async function borrarLineasDeHoja() {
       const hoja = document.getElementById('linea_hoja').value;
-      if (!confirm(`¿Estás seguro de borrar todas las líneas registradas en ${hoja}?`)) return;
+      if (!confirm(`¿Estás seguro de vaciar la tabla de líneas de ${hoja}?`)) return;
 
       try {
         await fetch(API_URL, {
@@ -548,9 +923,9 @@
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify({ action: 'limpiarLineas', hoja })
         });
-        showToast(`Tabla de ${hoja} limpiada por completo.`, 'bg-info');
+        showToast(`Tabla de ${hoja} limpiada por completo.`, 'info');
       } catch (err) {
-        showToast("Error al limpiar: " + err.message, 'bg-danger');
+        showToast("Error al limpiar: " + err.message, 'danger');
       }
     }
 
