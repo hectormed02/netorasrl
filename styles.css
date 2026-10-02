@@ -9,6 +9,12 @@ body {
   padding: 16px;
   background-color: #f1f3f4;
   color: #202124;
+  user-select: none; /* Bloquear selección de texto para mayor protección */
+}
+
+/* Permitir selección dentro de los inputs */
+input, select {
+  user-select: text;
 }
 
 .container {
@@ -151,6 +157,12 @@ input:focus, select:focus {
   box-shadow: 0 0 3px rgba(211,47,47,0.3);
 }
 
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
 .btn-submit {
   background-color: #1b5e20;
   color: #fff;
@@ -159,9 +171,8 @@ input:focus, select:focus {
   border-radius: 4px;
   font-weight: 700;
   cursor: pointer;
-  width: 100%;
   font-size: 14px;
-  margin-top: 10px;
+  flex: 3;
 }
 
 .btn-submit:hover {
@@ -171,6 +182,22 @@ input:focus, select:focus {
 .btn-submit:disabled {
   background-color: #78909c;
   cursor: not-allowed;
+}
+
+.btn-reset {
+  background-color: #546e7a;
+  color: #fff;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+  flex: 1;
+}
+
+.btn-reset:hover {
+  background-color: #37474f;
 }
 
 .alert {
