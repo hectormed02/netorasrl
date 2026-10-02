@@ -61,6 +61,28 @@ async function buscarDni(inputId, targetId) {
   }
 }
 
+// ==================== LIMPIEZA DE FORMULARIO (NUEVO REGISTRO) ====================
+function limpiarFormulario(formId, esMovil = false) {
+  if (confirm("¿Estás seguro que deseas limpiar todos los campos para un Nuevo Registro?")) {
+    document.getElementById(formId).reset();
+    
+    if (esMovil) {
+      // Reiniciar tabla de líneas
+      document.getElementById('tbodyLineas').innerHTML = '';
+      contadorLineas = 0;
+      agregarFilaLinea();
+      agregarFilaLinea();
+      actualizarModoMovil();
+    } else {
+      // Reiniciar selectores en cascada fija
+      alCambiarServicioFija();
+    }
+    
+    // Ocultar alertas
+    document.querySelectorAll('.alert').forEach(a => a.style.display = 'none');
+  }
+}
+
 // ==================== SINCRONIZACIÓN GOOGLE SHEETS ====================
 async function cargarDatosDesdeGoogleSheets() {
   const sync = document.getElementById('syncText');
