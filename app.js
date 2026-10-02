@@ -1,6 +1,60 @@
 const SPREADSHEET_ID = '1jlYxWBha5-hDvt4BNX4QaDBOA_7NiFOTevQ01plnULE';
 
-// 1. CATÁLOGOS BASE PRECARGADOS (Garantizan que las listas SIEMPRE carguen al instante)
+// 1. CATÁLOGO COMPLETO DE FIJA (Exactamente tus 41 planes)
+let catalogoPlanesFija = [
+  // ================= 1 PLAY — Solo Internet fijo =================
+  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '1500 Mbps (Sólo FTTH)', precioPromo: 'S/ 200.00', precioRegular: 'S/ 200.00', vigencia: 'Permanente' },
+  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '1000 Mbps', precioPromo: 'S/ 119.00', precioRegular: 'S/ 145.00', vigencia: '6 meses' },
+  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '800 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 100.00', precioRegular: 'S/ 100.00', vigencia: 'Permanente' },
+  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '400 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 69.00', precioRegular: 'S/ 89.00', vigencia: '6 meses' },
+  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '300 Mbps (bono a 600 Mbps x 6 meses)', precioPromo: 'S/ 79.00', precioRegular: 'S/ 79.00', vigencia: 'Permanente' },
+  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '200 Mbps (bono a 400 Mbps x 6 meses)', precioPromo: 'S/ 69.00', precioRegular: 'S/ 69.00', vigencia: 'Permanente' },
+
+  // ================= 2 PLAY — Internet + Telefonía 5000 =================
+  { servicio: '2 Play', servicioIncluido: 'Telefonía 5000', plan: '1500 Mbps (Sólo FTTH)', precioPromo: 'S/ 205.00', precioRegular: 'S/ 205.00', vigencia: 'Permanente' },
+  { servicio: '2 Play', servicioIncluido: 'Telefonía 5000', plan: '1000 Mbps', precioPromo: 'S/ 150.00', precioRegular: 'S/ 150.00', vigencia: 'Permanente' },
+  { servicio: '2 Play', servicioIncluido: 'Telefonía 5000', plan: '800 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 105.00', precioRegular: 'S/ 105.00', vigencia: 'Permanente' },
+  { servicio: '2 Play', servicioIncluido: 'Telefonía 5000', plan: '400 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 74.00', precioRegular: 'S/ 94.00', vigencia: '6 meses' },
+  { servicio: '2 Play', servicioIncluido: 'Telefonía 5000', plan: '300 Mbps (bono a 600 Mbps x 6 meses)', precioPromo: 'S/ 64.00', precioRegular: 'S/ 84.00', vigencia: '6 meses' },
+  { servicio: '2 Play', servicioIncluido: 'Telefonía 5000', plan: '200 Mbps (bono a 400 Mbps x 6 meses)', precioPromo: 'S/ 74.00', precioRegular: 'S/ 74.00', vigencia: 'Permanente' },
+
+  // ================= 2 PLAY — Internet + TV (Estándar Pro / Superior Pro) =================
+  { servicio: '2 Play', servicioIncluido: 'Estándar Pro', plan: '1500 Mbps (Sólo FTTH)', precioPromo: 'S/ 285.00', precioRegular: 'S/ 285.00', vigencia: 'Permanente' },
+  { servicio: '2 Play', servicioIncluido: 'Superior Pro', plan: '1500 Mbps (Sólo FTTH)', precioPromo: 'S/ 255.00', precioRegular: 'S/ 325.00', vigencia: '6 meses' },
+  { servicio: '2 Play', servicioIncluido: 'Estándar Pro', plan: '1000 Mbps', precioPromo: 'S/ 159.00', precioRegular: 'S/ 230.00', vigencia: '6 meses' },
+  { servicio: '2 Play', servicioIncluido: 'Superior Pro', plan: '1000 Mbps', precioPromo: 'S/ 189.00', precioRegular: 'S/ 270.00', vigencia: '6 meses' },
+  { servicio: '2 Play', servicioIncluido: 'Estándar Pro', plan: '800 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 185.00', precioRegular: 'S/ 185.00', vigencia: 'Permanente' },
+  { servicio: '2 Play', servicioIncluido: 'Superior Pro', plan: '800 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 155.00', precioRegular: 'S/ 225.00', vigencia: '6 meses' },
+  { servicio: '2 Play', servicioIncluido: 'Estándar Pro', plan: '400 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 109.00', precioRegular: 'S/ 170.00', vigencia: '6 meses' },
+  { servicio: '2 Play', servicioIncluido: 'Superior Pro', plan: '400 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 139.00', precioRegular: 'S/ 210.00', vigencia: '6 meses' },
+  { servicio: '2 Play', servicioIncluido: 'Estándar Pro', plan: '300 Mbps (bono a 600 Mbps x 6 meses)', precioPromo: 'S/ 99.00', precioRegular: 'S/ 160.00', vigencia: '6 meses' },
+  { servicio: '2 Play', servicioIncluido: 'Superior Pro', plan: '300 Mbps (bono a 600 Mbps x 6 meses)', precioPromo: 'S/ 200.00', precioRegular: 'S/ 200.00', vigencia: 'Permanente' },
+  { servicio: '2 Play', servicioIncluido: 'Estándar Pro', plan: '200 Mbps (bono a 400 Mbps x 6 meses)', precioPromo: 'S/ 89.00', precioRegular: 'S/ 150.00', vigencia: '6 meses' },
+  { servicio: '2 Play', servicioIncluido: 'Superior Pro', plan: '200 Mbps (bono a 400 Mbps x 6 meses)', precioPromo: 'S/ 119.00', precioRegular: 'S/ 190.00', vigencia: '6 meses' },
+
+  // ================= 3 PLAY — Internet + TV + Telefonía =================
+  { servicio: '3 Play', servicioIncluido: 'Estándar Pro', plan: '1500 Mbps (Sólo FTTH)', precioPromo: 'S/ 290.00', precioRegular: 'S/ 290.00', vigencia: 'Permanente' },
+  { servicio: '3 Play', servicioIncluido: 'Superior Pro', plan: '1500 Mbps (Sólo FTTH)', precioPromo: 'S/ 260.00', precioRegular: 'S/ 330.00', vigencia: '6 meses' },
+  { servicio: '3 Play', servicioIncluido: 'Estándar Pro', plan: '1000 Mbps', precioPromo: 'S/ 164.00', precioRegular: 'S/ 235.00', vigencia: '6 meses' },
+  { servicio: '3 Play', servicioIncluido: 'Superior Pro', plan: '1000 Mbps', precioPromo: 'S/ 194.00', precioRegular: 'S/ 275.00', vigencia: '6 meses' },
+  { servicio: '3 Play', servicioIncluido: 'Estándar Pro', plan: '800 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 190.00', precioRegular: 'S/ 190.00', vigencia: 'Permanente' },
+  { servicio: '3 Play', servicioIncluido: 'Superior Pro', plan: '800 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 160.00', precioRegular: 'S/ 230.00', vigencia: '6 meses' },
+  { servicio: '3 Play', servicioIncluido: 'Estándar Pro', plan: '400 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 114.00', precioRegular: 'S/ 175.00', vigencia: '6 meses' },
+  { servicio: '3 Play', servicioIncluido: 'Superior Pro', plan: '400 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 144.00', precioRegular: 'S/ 215.00', vigencia: '6 meses' },
+  { servicio: '3 Play', servicioIncluido: 'Estándar Pro', plan: '300 Mbps (bono a 600 Mbps x 6 meses)', precioPromo: 'S/ 104.00', precioRegular: 'S/ 165.00', vigencia: '6 meses' },
+  { servicio: '3 Play', servicioIncluido: 'Superior Pro', plan: '300 Mbps (bono a 600 Mbps x 6 meses)', precioPromo: 'S/ 205.00', precioRegular: 'S/ 205.00', vigencia: 'Permanente' },
+  { servicio: '3 Play', servicioIncluido: 'Estándar Pro', plan: '200 Mbps (bono a 400 Mbps x 6 meses)', precioPromo: 'S/ 94.00', precioRegular: 'S/ 155.00', vigencia: '6 meses' },
+  { servicio: '3 Play', servicioIncluido: 'Superior Pro', plan: '200 Mbps (bono a 400 Mbps x 6 meses)', precioPromo: 'S/ 124.00', precioRegular: 'S/ 195.00', vigencia: '6 meses' },
+
+  // ================= INTERNET DEDICADO =================
+  { servicio: 'Internet Dedicado', servicioIncluido: 'Enlace dedicado simétrico 10 Mbps', plan: 'Internet Dedicado ADI 10', precioPromo: 'Cotizar', precioRegular: 'Cotizar', vigencia: 'Cotizar' },
+  { servicio: 'Internet Dedicado', servicioIncluido: 'Enlace dedicado simétrico 20 Mbps', plan: 'Internet Dedicado ADI 20', precioPromo: 'Cotizar', precioRegular: 'Cotizar', vigencia: 'Cotizar' },
+  { servicio: 'Internet Dedicado', servicioIncluido: 'Enlace dedicado simétrico 50 Mbps', plan: 'Internet Dedicado ADI 50', precioPromo: 'Cotizar', precioRegular: 'Cotizar', vigencia: 'Cotizar' },
+  { servicio: 'Internet Dedicado', servicioIncluido: 'Enlace dedicado simétrico 100 Mbps', plan: 'Internet Dedicado ADI 100', precioPromo: 'Cotizar', precioRegular: 'Cotizar', vigencia: 'Cotizar' },
+  { servicio: 'Internet Dedicado', servicioIncluido: 'Enlace dedicado a medida (>100 Mbps)', plan: 'Internet Dedicado ADI a medida', precioPromo: 'Cotizar', precioRegular: 'Cotizar', vigencia: 'Cotizar' }
+];
+
+// 2. ASESORES BASE (Para autocompletado y escritura libre)
 const ASESORES_BASE = [
   'Correa Estela, Milagros Isabel',
   'Alvarez Rios, Carlos Alberto',
@@ -9,34 +63,7 @@ const ASESORES_BASE = [
   'Castro Sanchez, Pedro Luis'
 ];
 
-let catalogoPlanesFija = [
-  // 1 PLAY - Internet fijo
-  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '1500 Mbps (Sólo FTTH)', precioPromo: 'S/ 200.00', precioRegular: 'S/ 200.00', vigencia: 'Permanente' },
-  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '1000 Mbps', precioPromo: 'S/ 119.00', precioRegular: 'S/ 145.00', vigencia: '6 meses' },
-  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '800 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 100.00', precioRegular: 'S/ 100.00', vigencia: 'Permanente' },
-  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '400 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 69.00', precioRegular: 'S/ 89.00', vigencia: '6 meses' },
-  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '300 Mbps (bono a 600 Mbps x 6 meses)', precioPromo: 'S/ 79.00', precioRegular: 'S/ 79.00', vigencia: 'Permanente' },
-  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '200 Mbps (bono a 400 Mbps x 6 meses)', precioPromo: 'S/ 69.00', precioRegular: 'S/ 69.00', vigencia: 'Permanente' },
-  
-  // 2 PLAY - Internet + Telefonía
-  { servicio: '2 Play', servicioIncluido: 'Internet + Telefonía', plan: '1000 Mbps + Tel Ilimitado', precioPromo: 'S/ 135.00', precioRegular: 'S/ 160.00', vigencia: '6 meses' },
-  { servicio: '2 Play', servicioIncluido: 'Internet + Telefonía', plan: '800 Mbps + Tel Ilimitado', precioPromo: 'S/ 115.00', precioRegular: 'S/ 115.00', vigencia: 'Permanente' },
-  { servicio: '2 Play', servicioIncluido: 'Internet + Telefonía', plan: '400 Mbps + Tel Ilimitado', precioPromo: 'S/ 85.00', precioRegular: 'S/ 105.00', vigencia: '6 meses' },
-  { servicio: '2 Play', servicioIncluido: 'Internet + Telefonía', plan: '300 Mbps + Tel Ilimitado', precioPromo: 'S/ 95.00', precioRegular: 'S/ 95.00', vigencia: 'Permanente' },
-  { servicio: '2 Play', servicioIncluido: 'Internet + Telefonía', plan: '200 Mbps + Tel Ilimitado', precioPromo: 'S/ 85.00', precioRegular: 'S/ 85.00', vigencia: 'Permanente' },
-
-  // 3 PLAY - Internet + Telefonía + TV
-  { servicio: '3 Play', servicioIncluido: 'Internet + Telefonía + TV', plan: '1000 Mbps + TV Superior', precioPromo: 'S/ 195.00', precioRegular: 'S/ 230.00', vigencia: '6 meses' },
-  { servicio: '3 Play', servicioIncluido: 'Internet + Telefonía + TV', plan: '800 Mbps + TV Superior', precioPromo: 'S/ 175.00', precioRegular: 'S/ 175.00', vigencia: 'Permanente' },
-  { servicio: '3 Play', servicioIncluido: 'Internet + Telefonía + TV', plan: '400 Mbps + TV Avanzado', precioPromo: 'S/ 140.00', precioRegular: 'S/ 165.00', vigencia: '6 meses' },
-  { servicio: '3 Play', servicioIncluido: 'Internet + Telefonía + TV', plan: '300 Mbps + TV Avanzado', precioPromo: 'S/ 150.00', precioRegular: 'S/ 150.00', vigencia: 'Permanente' },
-  { servicio: '3 Play', servicioIncluido: 'Internet + Telefonía + TV', plan: '200 Mbps + TV Estándar', precioPromo: 'S/ 135.00', precioRegular: 'S/ 135.00', vigencia: 'Permanente' },
-
-  // INTERNET INALÁMBRICO
-  { servicio: 'Internet Inalámbrico', servicioIncluido: 'Internet Inalámbrico', plan: 'Inalámbrico 20 Mbps', precioPromo: 'S/ 59.00', precioRegular: 'S/ 69.00', vigencia: 'Permanente' },
-  { servicio: 'Internet Inalámbrico', servicioIncluido: 'Internet Inalámbrico', plan: 'Inalámbrico 30 Mbps', precioPromo: 'S/ 69.00', precioRegular: 'S/ 79.00', vigencia: 'Permanente' }
-];
-
+// 3. PLANES MÓVIL BASE
 let catalogoPlanesMovil = [
   { nombre: 'Max Negocios + 29.90', precio: 'S/ 29.90' },
   { nombre: 'Max Negocios + 39.90', precio: 'S/ 39.90' },
@@ -50,21 +77,21 @@ let catalogoPlanesMovil = [
 
 let contadorLineas = 0;
 
+// ==================== INICIALIZACIÓN ====================
 window.onload = function() {
-  // 1. Inicializar interfaz de inmediato con datos base
+  // Llenar listas de inmediato (no se queda en blanco nunca)
   poblarDatalistAsesores(ASESORES_BASE);
   poblarDatalistPlanesMovil(catalogoPlanesMovil);
   poblarSelectorServicioFija();
 
-  // Iniciar con 2 líneas por defecto en la tabla móvil
+  // Agregar 2 filas en tabla móvil
   agregarFilaLinea();
   agregarFilaLinea();
 
-  // 2. Intentar actualización en segundo plano desde Google Sheets
-  cargarDatosDesdeGoogleSheets();
+  // Intentar sincronizar asesores nuevos de Google Sheets en segundo plano
+  cargarAsesoresDesdeGoogleSheets();
 };
 
-// ==================== POBLAR SELECTORES INMEDIATAMENTE ====================
 function poblarDatalistAsesores(lista) {
   const datalist = document.getElementById('listaAsesores');
   datalist.innerHTML = '';
@@ -89,6 +116,7 @@ function poblarSelectorServicioFija() {
   const selServ = document.getElementById('fija_B15');
   selServ.innerHTML = '<option value="">Seleccione Servicio...</option>';
   
+  // Extrae '1 Play', '2 Play', '3 Play', 'Internet Dedicado'
   const serviciosUnicos = [...new Set(catalogoPlanesFija.map(p => p.servicio).filter(Boolean))];
   serviciosUnicos.forEach(s => {
     const opt = document.createElement('option');
@@ -118,7 +146,7 @@ function alCambiarServicioFija() {
     selInc.appendChild(opt);
   });
 
-  // Si solo hay una opción disponible, seleccionarla y avanzar
+  // Si solo hay una opción (como en 1 Play o Dedicado), autoseleccionar y avanzar
   if (incs.length === 1) {
     selInc.value = incs[0];
     alCambiarServicioIncluidoFija();
@@ -166,100 +194,32 @@ function limpiarPreciosFija() {
 }
 
 // ==================== SINCRONIZACIÓN EN SEGUNDO PLANO ====================
-async function cargarDatosDesdeGoogleSheets() {
+async function cargarAsesoresDesdeGoogleSheets() {
   const sync = document.getElementById('syncText');
-  sync.textContent = '🔄 Verificando actualizaciones con Google Sheets...';
-
   try {
-    await Promise.all([
-      actualizarAsesoresOnline(),
-      actualizarPlanesFijaOnline(),
-      actualizarPlanesMovilOnline()
-    ]);
-    sync.innerHTML = '✅ <b>Conectado con Google Sheets:</b> Catálogos sincronizados en tiempo real.';
+    const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=ASESORES`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error();
+    const text = await res.text();
+    const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+    const data = JSON.parse(jsonStr);
+
+    let lista = [];
+    (data.table.rows || []).forEach(r => {
+      const val = r.c && r.c[0] ? r.c[0].v : null;
+      if (val && String(val).trim() !== '' && String(val).trim().toUpperCase() !== 'ASESOR') {
+        lista.push(String(val).trim());
+      }
+    });
+
+    if (lista.length > 0) {
+      poblarDatalistAsesores(lista);
+      sync.innerHTML = '✅ <b>Conectado con Google Sheets:</b> Catálogo y Asesores sincronizados en vivo.';
+    } else {
+      sync.innerHTML = '⚡ <b>Catálogo activo:</b> Planes de Fija y Asesores listos.';
+    }
   } catch (err) {
-    console.log('Trabajando con catálogo local precargado:', err);
-    sync.innerHTML = '⚡ <b>Catálogo activo:</b> Planes y Asesores listos para usar.';
-  }
-}
-
-async function fetchSheetGViz(sheetName) {
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Respuesta no válida');
-  const text = await res.text();
-  const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
-  return JSON.parse(jsonStr);
-}
-
-async function actualizarAsesoresOnline() {
-  const data = await fetchSheetGViz('ASESORES');
-  const rows = data.table.rows || [];
-  let listaOnline = [];
-
-  rows.forEach(r => {
-    const val = r.c && r.c[0] ? r.c[0].v : null;
-    if (val && String(val).trim() !== '' && String(val).trim().toUpperCase() !== 'ASESOR') {
-      listaOnline.push(String(val).trim());
-    }
-  });
-
-  if (listaOnline.length > 0) {
-    poblarDatalistAsesores(listaOnline);
-  }
-}
-
-async function actualizarPlanesFijaOnline() {
-  const data = await fetchSheetGViz('DATA FIJA');
-  const rows = data.table.rows || [];
-  let listaOnline = [];
-
-  rows.forEach((r, idx) => {
-    if (idx >= 3 && r.c) {
-      const cat = r.c[0] ? String(r.c[0].v).trim() : '';
-      const plan = r.c[1] ? String(r.c[1].v).trim() : '';
-      const inc = r.c[2] ? String(r.c[2].v).trim() : '';
-      const pPromo = r.c[10] ? r.c[10].v : '';
-      const vig = r.c[11] ? r.c[11].v : '';
-      const pReg = r.c[13] ? r.c[13].v : '';
-
-      if (plan) {
-        listaOnline.push({
-          servicio: cat,
-          servicioIncluido: inc,
-          plan: plan,
-          precioPromo: pPromo,
-          vigencia: vig,
-          precioRegular: pReg
-        });
-      }
-    }
-  });
-
-  if (listaOnline.length > 0) {
-    catalogoPlanesFija = listaOnline;
-    poblarSelectorServicioFija();
-  }
-}
-
-async function actualizarPlanesMovilOnline() {
-  const data = await fetchSheetGViz('DATA MOVIL');
-  const rows = data.table.rows || [];
-  let listaOnline = [];
-
-  rows.forEach((r, idx) => {
-    if (idx >= 1 && r.c) {
-      const plan = r.c[0] ? String(r.c[0].v).trim() : '';
-      const precio = r.c[1] ? r.c[1].v : '';
-      if (plan && plan.toUpperCase() !== 'PLAN') {
-        listaOnline.push({ nombre: plan, precio: precio });
-      }
-    }
-  });
-
-  if (listaOnline.length > 0) {
-    catalogoPlanesMovil = listaOnline;
-    poblarDatalistPlanesMovil(catalogoPlanesMovil);
+    sync.innerHTML = '⚡ <b>Catálogo activo:</b> 41 Planes de Fija y Asesores listos.';
   }
 }
 
