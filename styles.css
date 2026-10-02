@@ -6,13 +6,13 @@
 
 body {
   margin: 0;
-  padding: 14px;
+  padding: 16px;
   background-color: #f1f3f4;
   color: #202124;
 }
 
 .container {
-  max-width: 1100px;
+  max-width: 1080px;
   margin: 0 auto;
 }
 
@@ -35,7 +35,7 @@ body {
   color: #fff;
   border: none;
   padding: 5px 10px;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
   font-weight: 600;
 }
@@ -81,7 +81,7 @@ body {
   background: #fff;
   padding: 16px 20px;
   border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
   margin-bottom: 12px;
 }
 
@@ -138,8 +138,7 @@ label {
   font-size: 11px;
 }
 
-input,
-select {
+input, select {
   padding: 7px 10px;
   border: 1px solid #cfd8dc;
   border-radius: 4px;
@@ -147,10 +146,9 @@ select {
   background: #fff;
 }
 
-input:focus,
-select:focus {
+input:focus, select:focus {
   border-color: #d32f2f;
-  box-shadow: 0 0 3px rgba(211, 47, 47, 0.3);
+  box-shadow: 0 0 3px rgba(211,47,47,0.3);
 }
 
 .btn-submit {
