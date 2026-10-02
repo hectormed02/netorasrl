@@ -11,8 +11,13 @@
   
   <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+
+  <!-- SEGURIDAD BÁSICA - Bloqueo de Clic Derecho -->
+  <script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+  </script>
 </head>
-<body>
+<body oncontextmenu="return false;">
   <div class="container">
 
     <!-- Indicador de conexión con Google Sheets -->
@@ -21,7 +26,7 @@
       <button type="button" onclick="cargarDatosDesdeGoogleSheets()" class="btn-recargar">Recargar Datos</button>
     </div>
 
-    <!-- Datalist global para asesores (permite escribir o elegir) -->
+    <!-- Datalist global para asesores -->
     <datalist id="listaAsesores"></datalist>
     <datalist id="listaPlanesMovil"></datalist>
 
@@ -250,7 +255,10 @@
           </div>
         </div>
 
-        <button type="submit" class="btn-submit" id="btnFija">💾 DESCARGAR EXCEL (PDV - FIJA.xlsx)</button>
+        <div class="action-buttons">
+          <button type="submit" class="btn-submit" id="btnFija">💾 DESCARGAR EXCEL (PDV - FIJA.xlsx)</button>
+          <button type="button" class="btn-reset" onclick="limpiarFormulario('formFija')">🗑️ NUEVO REGISTRO</button>
+        </div>
         <div id="alertaFija" class="alert"></div>
       </form>
     </div>
@@ -502,7 +510,10 @@
           <button type="button" class="btn-add" onclick="agregarFilaLinea()">➕ Agregar otra línea</button>
         </div>
 
-        <button type="submit" class="btn-submit" id="btnMovil">💾 DESCARGAR EXCEL (PDV - MOVIL - PORTABILIDAD.xlsx)</button>
+        <div class="action-buttons">
+          <button type="submit" class="btn-submit" id="btnMovil">💾 DESCARGAR EXCEL (PDV - MOVIL - PORTABILIDAD.xlsx)</button>
+          <button type="button" class="btn-reset" onclick="limpiarFormulario('formMovil', true)">🗑️ NUEVO REGISTRO</button>
+        </div>
         <div id="alertaMovil" class="alert"></div>
       </form>
     </div>
@@ -510,5 +521,23 @@
   </div>
 
   <script src="app.js"></script>
+
+  <!-- SEGURIDAD BÁSICA - Bloqueo de Teclas (F12, Ctrl+U, Ctrl+Shift+I) -->
+  <script>
+    document.onkeydown = function(e) {
+      if (e.keyCode == 123) { // F12
+        return false;
+      }
+      if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { // Ctrl+Shift+I
+        return false;
+      }
+      if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { // Ctrl+Shift+J
+        return false;
+      }
+      if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { // Ctrl+U
+        return false;
+      }
+    };
+  </script>
 </body>
 </html>
