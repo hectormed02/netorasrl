@@ -59,7 +59,7 @@ async function buscarDni(inputId, targetId) {
   }
 }
 
-// ==================== NUEVO REGISTRO ====================
+// ==================== LIMPIEZA DE FORMULARIO (NUEVO REGISTRO) ====================
 function limpiarFormulario(formId, esMovil = false) {
   if (confirm("¿Estás seguro que deseas limpiar todos los campos para un Nuevo Registro?")) {
     document.getElementById(formId).reset();
@@ -79,10 +79,10 @@ function limpiarFormulario(formId, esMovil = false) {
   }
 }
 
-// ==================== GOOGLE SHEETS ====================
+// ==================== SINCRONIZACIÓN GOOGLE SHEETS ====================
 async function cargarDatosDesdeGoogleSheets() {
   const sync = document.getElementById('syncText');
-  sync.textContent = '🔄 Conectando catálogo en la nube...';
+  sync.textContent = '🔄 Conectando con Google Sheets para cargar Asesores, Planes y Ubigeo...';
 
   try {
     await Promise.all([
@@ -91,17 +91,17 @@ async function cargarDatosDesdeGoogleSheets() {
       actualizarPlanesMovilOnline(),
       actualizarUbigeoOnline()
     ]);
-    sync.innerHTML = '✅ <b>Conectado:</b> Catálogos y Ubigeo sincronizados correctamente.';
+    sync.innerHTML = '✅ <b>Conectado:</b> Catálogos y Ubigeo sincronizados en tiempo real.';
   } catch (err) {
-    console.warn('Error sincronizando Sheets:', err);
-    sync.innerHTML = '⚠️ <b>Error de red:</b> Verifica permisos en el Drive.';
+    console.warn('Error sincronizando Google Sheets:', err);
+    sync.innerHTML = '⚠️ <b>Error de conexión:</b> Verifica que la hoja sea pública ("Cualquier persona con el enlace").';
   }
 }
 
 async function fetchSheetGViz(sheetName) {
   const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`Error leyendo ${sheetName}`);
+  if (!res.ok) throw new Error(`Error al leer ${sheetName}`);
   const text = await res.text();
   const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
   return JSON.parse(jsonStr);
@@ -138,7 +138,14 @@ async function actualizarPlanesFijaOnline() {
       const pReg = r.c[13] ? r.c[13].v : '';
 
       if (plan) {
-        catalogoPlanesFija.push({ servicio: cat, servicioIncluido: inc, plan: plan, precioPromo: pPromo, vigencia: vig, precioRegular: pReg });
+        catalogoPlanesFija.push({
+          servicio: cat,
+          servicioIncluido: inc,
+          plan: plan,
+          precioPromo: pPromo,
+          vigencia: vig,
+          precioRegular: pReg
+        });
       }
     }
   });
@@ -147,7 +154,9 @@ async function actualizarPlanesFijaOnline() {
   selServ.innerHTML = '<option value="">Seleccione Servicio...</option>';
   const unicos = [...new Set(catalogoPlanesFija.map(p => p.servicio).filter(Boolean))];
   unicos.forEach(s => {
-    const opt = document.createElement('option'); opt.value = s; opt.textContent = s;
+    const opt = document.createElement('option');
+    opt.value = s;
+    opt.textContent = s;
     selServ.appendChild(opt);
   });
 }
@@ -165,7 +174,8 @@ async function actualizarPlanesMovilOnline() {
       const precio = r.c[1] ? r.c[1].v : '';
       if (plan && plan.toUpperCase() !== 'PLAN') {
         catalogoPlanesMovil.push({ nombre: plan, precio: precio });
-        const opt = document.createElement('option'); opt.value = plan;
+        const opt = document.createElement('option');
+        opt.value = plan;
         datalist.appendChild(opt);
       }
     }
@@ -221,7 +231,9 @@ function actualizarProvincias(pestaña) {
 
   if (catalogoUbigeo[dep]) {
     Object.keys(catalogoUbigeo[dep]).sort().forEach(p => {
-      const opt = document.createElement('option'); opt.value = p; opt.textContent = p;
+      const opt = document.createElement('option');
+      opt.value = p;
+      opt.textContent = p;
       selProv.appendChild(opt);
     });
   }
@@ -240,13 +252,15 @@ function actualizarDistritos(pestaña) {
 
   if (catalogoUbigeo[dep] && catalogoUbigeo[dep][prov]) {
     catalogoUbigeo[dep][prov].sort().forEach(d => {
-      const opt = document.createElement('option'); opt.value = d; opt.textContent = d;
+      const opt = document.createElement('option');
+      opt.value = d;
+      opt.textContent = d;
       selDist.appendChild(opt);
     });
   }
 }
 
-// ==================== CASCADA FIJA ====================
+// ==================== CASCADA PLANES FIJA ====================
 function alCambiarServicioFija() {
   const serv = document.getElementById('fija_B15').value;
   const selInc = document.getElementById('fija_B14');
@@ -262,7 +276,9 @@ function alCambiarServicioFija() {
 
   const incs = [...new Set(catalogoPlanesFija.filter(p => p.servicio === serv).map(p => p.servicioIncluido).filter(Boolean))];
   incs.forEach(inc => {
-    const opt = document.createElement('option'); opt.value = inc; opt.textContent = inc;
+    const opt = document.createElement('option');
+    opt.value = inc;
+    opt.textContent = inc;
     selInc.appendChild(opt);
   });
   if (incs.length === 1) {
@@ -285,7 +301,9 @@ function alCambiarServicioIncluidoFija() {
 
   const planes = catalogoPlanesFija.filter(p => p.servicio === serv && p.servicioIncluido === servInc);
   planes.forEach(p => {
-    const opt = document.createElement('option'); opt.value = p.plan; opt.textContent = p.plan;
+    const opt = document.createElement('option');
+    opt.value = p.plan;
+    opt.textContent = p.plan;
     selPlan.appendChild(opt);
   });
 }
@@ -307,7 +325,7 @@ function alCambiarPlanFija() {
   }
 }
 
-// ==================== LÍNEAS MÓVILES ====================
+// ==================== LÍNEAS MÓVILES DINÁMICAS ====================
 function agregarFilaLinea() {
   contadorLineas++;
   const tbody = document.getElementById('tbodyLineas');
@@ -315,7 +333,7 @@ function agregarFilaLinea() {
   tr.innerHTML = `
     <td>${tbody.children.length + 1}</td>
     <td><input type="tel" class="col-linea" maxlength="9" placeholder="9XXXXXXXX" required></td>
-    <td><input type="text" class="col-plan" list="listaPlanesMovil" placeholder="Escribe..." required onchange="alElegirPlanMovilLinea(this)"></td>
+    <td><input type="text" class="col-plan" list="listaPlanesMovil" placeholder="Escribe o elige..." required onchange="alElegirPlanMovilLinea(this)"></td>
     <td><input type="number" step="0.01" class="col-cf" placeholder="0.00" oninput="recalcularFila(this)"></td>
     <td><input type="number" class="col-desc" value="0" min="0" max="100" oninput="recalcularFila(this)"></td>
     <td><input type="number" step="0.01" class="col-cffinal readonly-field" readonly placeholder="0.00"></td>
@@ -353,7 +371,9 @@ function renumerar() {
     r.children[0].textContent = idx + 1;
   });
   const inputCant = document.getElementById('movil_B15');
-  if (inputCant) inputCant.value = document.querySelectorAll('#tbodyLineas tr').length;
+  if (inputCant) {
+    inputCant.value = document.querySelectorAll('#tbodyLineas tr').length;
+  }
 }
 
 function recalcularFila(elem) {
@@ -373,6 +393,7 @@ function cambiarTab(tabId, ev) {
 
 function actualizarModoMovil() {
   const subtipo = document.querySelector('input[name="subtipoPlantilla"]:checked').value;
+  const btn = document.getElementById('btnMovil');
   const tipoOp = document.getElementById('movil_B13');
 
   if (subtipo === 'PORTABILIDAD') {
@@ -388,13 +409,13 @@ async function descargarFija(e) {
   const btn = document.getElementById('btnFija');
   const alertBox = document.getElementById('alertaFija');
   btn.disabled = true;
-  btn.innerHTML = '⏳ Llenando plantilla...';
+  btn.innerHTML = '⏳ Llenando plantilla y descargando...';
   alertBox.style.display = 'none';
 
   try {
     const urlArchivo = './PDV - FIJA.xlsx';
     const response = await fetch(urlArchivo);
-    if (!response.ok) throw new Error(`Falta el archivo: ${urlArchivo}`);
+    if (!response.ok) throw new Error(`Error leyendo ${urlArchivo}`);
 
     const arrayBuffer = await response.arrayBuffer();
     const workbook = new ExcelJS.Workbook();
@@ -410,11 +431,15 @@ async function descargarFija(e) {
 
     const buffer = await workbook.xlsx.writeBuffer();
     const ruc = document.getElementById('fija_B6').value || 'SIN_RUC';
-    saveAs(new Blob([buffer]), `PDV_FIJA_${ruc}.xlsx`);
+    
+    // FORMATO DE NOMBRE SOLICITADO
+    const nombreDescarga = `PDV - FIJA_${ruc}.xlsx`;
+    saveAs(new Blob([buffer]), nombreDescarga);
 
     alertBox.className = 'alert alert-success';
-    alertBox.textContent = `¡Excel descargado! (PDV_FIJA_${ruc}.xlsx)`;
+    alertBox.textContent = `¡Excel descargado exitosamente! (${nombreDescarga})`;
     alertBox.style.display = 'block';
+
   } catch (err) {
     alertBox.className = 'alert alert-error';
     alertBox.textContent = 'Error: ' + err.message;
@@ -434,7 +459,7 @@ async function descargarMovil(e) {
   const btn = document.getElementById('btnMovil');
   const alertBox = document.getElementById('alertaMovil');
   btn.disabled = true;
-  btn.innerHTML = '⏳ Llenando plantilla...';
+  btn.innerHTML = '⏳ Llenando plantilla y descargando...';
   alertBox.style.display = 'none';
 
   try {
@@ -444,7 +469,7 @@ async function descargarMovil(e) {
       : 'PDV - MOVIL - ALTA NUEVA.xlsx';
 
     const response = await fetch(`./${encodeURIComponent(nombreArchivoPlantilla)}`);
-    if (!response.ok) throw new Error(`Falta el archivo: ${nombreArchivoPlantilla}`);
+    if (!response.ok) throw new Error(`Error leyendo ${nombreArchivoPlantilla}`);
 
     const arrayBuffer = await response.arrayBuffer();
     const workbook = new ExcelJS.Workbook();
@@ -486,11 +511,16 @@ async function descargarMovil(e) {
 
     const buffer = await workbook.xlsx.writeBuffer();
     const ruc = document.getElementById('movil_B9').value || 'SIN_RUC';
-    const nombreSalida = (subtipo === 'PORTABILIDAD') ? `PDV_MOVIL_PORTABILIDAD_${ruc}.xlsx` : `PDV_MOVIL_ALTA_NUEVA_${ruc}.xlsx`;
+    
+    // FORMATO DE NOMBRE SOLICITADO
+    const nombreSalida = (subtipo === 'PORTABILIDAD') 
+      ? `PDV - MOVIL - PORTABILIDAD_${ruc}.xlsx` 
+      : `PDV - MOVIL - ALTA NUEVA_${ruc}.xlsx`;
+      
     saveAs(new Blob([buffer]), nombreSalida);
 
     alertBox.className = 'alert alert-success';
-    alertBox.textContent = `¡Excel descargado! (${nombreSalida})`;
+    alertBox.textContent = `¡Excel descargado exitosamente! (${nombreSalida})`;
     alertBox.style.display = 'block';
 
   } catch (err) {
