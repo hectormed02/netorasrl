@@ -59,7 +59,7 @@
           <div class="grid-2">
             <div class="field">
               <label>RUC (B6):</label>
-              <input type="text" id="fija_B6" maxlength="11" pattern="[0-9]{11}" required placeholder="11 dígitos">
+              <input type="text" id="fija_B6" maxlength="11" pattern="[0-9]{11}" required placeholder="11 dígitos" oninput="buscarRuc('fija_B6', 'fija_B7', 'fija_B11')">
             </div>
             <div class="field">
               <label>RAZON SOCIAL (B7):</label>
@@ -209,11 +209,11 @@
           <div class="grid-3">
             <div class="field">
               <label>REPRESENTANTE LEGAL (B30):</label>
-              <input type="text" id="fija_B30">
+              <input type="text" id="fija_B30" placeholder="Nombres completos">
             </div>
             <div class="field">
               <label>DNI (B31):</label>
-              <input type="text" id="fija_B31" maxlength="8">
+              <input type="text" id="fija_B31" maxlength="8" pattern="[0-9]{8}" placeholder="DNI 8 dígitos" oninput="buscarDni('fija_B31', 'fija_B30')">
             </div>
             <div class="field">
               <label>TELEFONO (B32):</label>
@@ -227,7 +227,7 @@
           <div class="grid-3">
             <div class="field">
               <label>CONTACTO INSTALACION (B34):</label>
-              <input type="text" id="fija_B34">
+              <input type="text" id="fija_B34" placeholder="Nombre de contacto">
             </div>
             <div class="field">
               <label>TELEFONO N° 1 (B35):</label>
@@ -241,7 +241,7 @@
           <div class="grid-2">
             <div class="field">
               <label>DNI (B37):</label>
-              <input type="text" id="fija_B37" maxlength="8">
+              <input type="text" id="fija_B37" maxlength="8" pattern="[0-9]{8}" placeholder="DNI del contacto" oninput="buscarDni('fija_B37', 'fija_B34')">
             </div>
             <div class="field">
               <label>OBSERVACIONES (B38):</label>
@@ -304,7 +304,7 @@
           <div class="grid-2">
             <div class="field">
               <label>RUC (B9):</label>
-              <input type="text" id="movil_B9" maxlength="11" pattern="[0-9]{11}" required placeholder="11 dígitos">
+              <input type="text" id="movil_B9" maxlength="11" pattern="[0-9]{11}" required placeholder="11 dígitos" oninput="buscarRuc('movil_B9', 'movil_B10', 'movil_B17')">
             </div>
             <div class="field">
               <label>RAZON SOCIAL (B10):</label>
@@ -407,7 +407,6 @@
             </div>
           </div>
 
-          <!-- Ubigeo MÓVIL en Cascada -->
           <div class="grid-3">
             <div class="field">
               <label>DEPARTAMENTO ENTREGA (B29):</label>
@@ -447,11 +446,11 @@
           <div class="grid-4">
             <div class="field">
               <label>NOMBRE RRLL (B35):</label>
-              <input type="text" id="movil_B35">
+              <input type="text" id="movil_B35" placeholder="Nombres RRLL">
             </div>
             <div class="field">
               <label>DNI RRLL (B36):</label>
-              <input type="text" id="movil_B36" maxlength="8">
+              <input type="text" id="movil_B36" maxlength="8" pattern="[0-9]{8}" placeholder="DNI" oninput="buscarDni('movil_B36', 'movil_B35')">
             </div>
             <div class="field">
               <label>TELEFONO 1 RRLL (B37):</label>
