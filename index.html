@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión SISACT PDV | NETORA SRL</title>
   
-  <!-- Librerías ExcelJS y FileSaver -->
+  <!-- ExcelJS y FileSaver para inyección directa y descarga instantánea -->
   <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
   
@@ -15,17 +15,17 @@
 <body>
   <div class="container">
 
-    <!-- Barra de estado de conexión con Google Sheets -->
+    <!-- Indicador de conexión con Google Sheets -->
     <div class="sync-status">
-      <span id="syncText">🔄 Conectando con Google Sheets para cargar Asesores y Planes...</span>
+      <span id="syncText">🔄 Conectando con Google Sheets para cargar Asesores, Planes y Ubigeo...</span>
       <button type="button" onclick="cargarDatosDesdeGoogleSheets()" class="btn-recargar">Recargar Datos</button>
     </div>
 
-    <!-- Datalists para búsqueda y escritura libre -->
+    <!-- Datalist global para asesores (permite escribir o elegir) -->
     <datalist id="listaAsesores"></datalist>
     <datalist id="listaPlanesMovil"></datalist>
 
-    <!-- Navegación Principal -->
+    <!-- Navegación por Pestañas -->
     <div class="tabs-container">
       <button class="tab-btn active" onclick="cambiarTab('tabFija', event)">🏢 PESTAÑA: PDV - FIJA</button>
       <button class="tab-btn" onclick="cambiarTab('tabMovil', event)">📱 PESTAÑA: PDV - MÓVIL</button>
@@ -34,8 +34,10 @@
     <!-- ==================== PESTAÑA 1: PDV - FIJA ==================== -->
     <div id="tabFija" class="tab-content active">
       <form id="formFija" onsubmit="descargarFija(event)">
+        
+        <!-- Cabecera FIJA -->
         <div class="card">
-          <div class="banner-header">VENTA SISACT PDV — DACE: NETORA SRL</div>
+          <div class="banner-header">VENTA SISACT PDV — DACE: NETORA SRL (FIJA)</div>
           <div class="grid-3">
             <div class="field">
               <label>ASESOR (B3) — Elige o escribe:</label>
@@ -101,6 +103,7 @@
           </div>
         </div>
 
+        <!-- Detalle Técnico FIJA -->
         <div class="card">
           <div class="banner-sub">FIJA PDV — DETALLE TÉCNICO Y COMERCIAL</div>
           <div class="grid-3">
@@ -131,18 +134,18 @@
             </div>
             <div class="field">
               <label>PROMOCION (B18):</label>
-              <input type="text" id="fija_B18" class="readonly-field" placeholder="Vigencia">
+              <input type="text" id="fija_B18" class="readonly-field" placeholder="Vigencia" readonly>
             </div>
             <div class="field">
               <label>CARGO FIJO MENSUAL (PROMOCION) (B19):</label>
-              <input type="text" id="fija_B19" class="readonly-field" placeholder="S/ 0.00">
+              <input type="text" id="fija_B19" class="readonly-field" placeholder="S/ 0.00" readonly>
             </div>
           </div>
 
           <div class="grid-3">
             <div class="field">
               <label>CARGO FIJO (B20):</label>
-              <input type="text" id="fija_B20" class="readonly-field" placeholder="S/ 0.00">
+              <input type="text" id="fija_B20" class="readonly-field" placeholder="S/ 0.00" readonly>
             </div>
             <div class="field">
               <label>PLANO (B21):</label>
@@ -168,15 +171,21 @@
           <div class="grid-3">
             <div class="field">
               <label>DEPARTAMENTO (B25):</label>
-              <input type="text" id="fija_B25">
+              <select id="fija_B25" onchange="actualizarProvincias('fija')">
+                <option value="">Seleccione Departamento...</option>
+              </select>
             </div>
             <div class="field">
               <label>PROVINCIA (B26):</label>
-              <input type="text" id="fija_B26">
+              <select id="fija_B26" onchange="actualizarDistritos('fija')">
+                <option value="">Seleccione Provincia...</option>
+              </select>
             </div>
             <div class="field">
               <label>DISTRITO (B27):</label>
-              <input type="text" id="fija_B27">
+              <select id="fija_B27">
+                <option value="">Seleccione Distrito...</option>
+              </select>
             </div>
           </div>
 
@@ -259,7 +268,7 @@
           </div>
         </div>
 
-        <!-- Campos de PDV - MOVIL (B3 a B40) -->
+        <!-- Cabecera MÓVIL -->
         <div class="card">
           <div class="banner-header">VENTA SISACT PDV — DACE: NETORA SRL (MÓVIL)</div>
           <div class="grid-3">
@@ -314,7 +323,7 @@
             </div>
             <div class="field">
               <label>TIPO OPERACIÓN (B13):</label>
-              <input type="text" id="movil_B13" value="PORTABILIDAD">
+              <input type="text" id="movil_B13" value="PORTABILIDAD" readonly class="readonly-field">
             </div>
           </div>
 
@@ -330,7 +339,7 @@
             </div>
             <div class="field">
               <label>CANTIDAD LINEAS (B15):</label>
-              <input type="number" id="movil_B15" min="1" value="1">
+              <input type="number" id="movil_B15" class="readonly-field" readonly>
             </div>
             <div class="field">
               <label>MEDIO DE PAGO (B16):</label>
@@ -350,6 +359,7 @@
           </div>
         </div>
 
+        <!-- Entrega y Datos Técnicos MÓVIL -->
         <div class="card">
           <div class="banner-sub">MOVIL PDV — ENTREGA Y DATOS TÉCNICOS (B19 a B40)</div>
           <div class="grid-3">
@@ -397,18 +407,25 @@
             </div>
           </div>
 
+          <!-- Ubigeo MÓVIL en Cascada -->
           <div class="grid-3">
             <div class="field">
               <label>DEPARTAMENTO ENTREGA (B29):</label>
-              <input type="text" id="movil_B29" value="LIMA">
+              <select id="movil_B29" onchange="actualizarProvincias('movil')">
+                <option value="">Seleccione Departamento...</option>
+              </select>
             </div>
             <div class="field">
               <label>PROVINCIA ENTREGA (B30):</label>
-              <input type="text" id="movil_B30" value="LIMA">
+              <select id="movil_B30" onchange="actualizarDistritos('movil')">
+                <option value="">Seleccione Provincia...</option>
+              </select>
             </div>
             <div class="field">
               <label>DISTRITO ENTREGA (B31):</label>
-              <input type="text" id="movil_B31" value="LIMA">
+              <select id="movil_B31">
+                <option value="">Seleccione Distrito...</option>
+              </select>
             </div>
           </div>
 
@@ -458,13 +475,13 @@
           </div>
         </div>
 
-        <!-- Tabla Multi-líneas (Hoja PORTABILIDAD o ALTA NUEVA) -->
+        <!-- Tabla Multi-Líneas MÓVIL -->
         <div class="card">
           <div class="banner-header" id="tituloTablaLineas">DETALLE DE LÍNEAS (HOJA PORTABILIDAD)</div>
           
           <div class="field" style="max-width:320px; margin-bottom:8px;">
             <label>CAMPAÑA (Celda E1 de la hoja):</label>
-            <input type="text" id="lineas_E1_campana" placeholder="Campaña">
+            <input type="text" id="lineas_E1_campana" placeholder="Nombre de Campaña">
           </div>
 
           <table class="tabla-lineas">
