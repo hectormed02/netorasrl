@@ -1,8 +1,9 @@
 const SPREADSHEET_ID = '1jlYxWBha5-hDvt4BNX4QaDBOA_7NiFOTevQ01plnULE';
+const TOKEN_APISPERU = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImhlY3Rvcm1lZGJhcnJAZ21haWwuY29tIn0.Ru1stNWGnCkrYuglCM0tgY0yl6jXu8-HgEkZe7qZhjA';
 
 let catalogoPlanesFija = [];
 let catalogoPlanesMovil = [];
-let catalogoUbigeo = {}; // { Dep: { Prov: [Dist, Dist] } }
+let catalogoUbigeo = {}; 
 let contadorLineas = 0;
 
 window.onload = function() {
@@ -11,7 +12,56 @@ window.onload = function() {
   cargarDatosDesdeGoogleSheets();
 };
 
-// ==================== SINCRONIZACIÓN API GOOGLE SHEETS ====================
+// ==================== API SUNAT Y RENIEC ====================
+async function buscarRuc(inputId, targetId, dirId) {
+  const ruc = document.getElementById(inputId).value.trim();
+  const target = document.getElementById(targetId);
+  const dir = dirId ? document.getElementById(dirId) : null;
+  
+  if (ruc.length === 11) {
+    target.value = "Buscando empresa...";
+    try {
+      const res = await fetch(`https://dniruc.apisperu.com/api/v1/ruc/${ruc}?token=${TOKEN_APISPERU}`);
+      const data = await res.json();
+      if (data && data.razonSocial) {
+        target.value = data.razonSocial;
+        if (dir && data.direccion) {
+          dir.value = data.direccion;
+        }
+      } else {
+        target.value = "";
+        alert("RUC no encontrado o inactivo.");
+      }
+    } catch (e) {
+      target.value = "";
+      console.error("Error API RUC:", e);
+    }
+  }
+}
+
+async function buscarDni(inputId, targetId) {
+  const dni = document.getElementById(inputId).value.trim();
+  const target = document.getElementById(targetId);
+  
+  if (dni.length === 8) {
+    target.value = "Buscando persona...";
+    try {
+      const res = await fetch(`https://dniruc.apisperu.com/api/v1/dni/${dni}?token=${TOKEN_APISPERU}`);
+      const data = await res.json();
+      if (data && data.nombres) {
+        target.value = `${data.nombres} ${data.apellidoPaterno} ${data.apellidoMaterno}`;
+      } else {
+        target.value = "";
+        alert("DNI no encontrado.");
+      }
+    } catch (e) {
+      target.value = "";
+      console.error("Error API DNI:", e);
+    }
+  }
+}
+
+// ==================== SINCRONIZACIÓN GOOGLE SHEETS ====================
 async function cargarDatosDesdeGoogleSheets() {
   const sync = document.getElementById('syncText');
   sync.textContent = '🔄 Conectando con Google Sheets para cargar Asesores, Planes y Ubigeo...';
@@ -26,7 +76,7 @@ async function cargarDatosDesdeGoogleSheets() {
     sync.innerHTML = '✅ <b>Conectado:</b> Catálogos y Ubigeo sincronizados en tiempo real.';
   } catch (err) {
     console.warn('Error sincronizando Google Sheets:', err);
-    sync.innerHTML = '⚠️ <b>Error de red o permisos:</b> Verifica que la hoja sea pública ("Cualquier persona con el enlace").';
+    sync.innerHTML = '⚠️ <b>Error de conexión:</b> Verifica que la hoja sea pública ("Cualquier persona con el enlace").';
   }
 }
 
@@ -39,7 +89,6 @@ async function fetchSheetGViz(sheetName) {
   return JSON.parse(jsonStr);
 }
 
-// ---------------- Asesores ----------------
 async function actualizarAsesoresOnline() {
   const data = await fetchSheetGViz('ASESORES');
   const rows = data.table.rows || [];
@@ -56,7 +105,6 @@ async function actualizarAsesoresOnline() {
   });
 }
 
-// ---------------- Planes Fija ----------------
 async function actualizarPlanesFijaOnline() {
   const data = await fetchSheetGViz('DATA FIJA');
   const rows = data.table.rows || [];
@@ -95,7 +143,6 @@ async function actualizarPlanesFijaOnline() {
   });
 }
 
-// ---------------- Planes Móvil ----------------
 async function actualizarPlanesMovilOnline() {
   const data = await fetchSheetGViz('DATA MOVIL');
   const rows = data.table.rows || [];
@@ -117,7 +164,6 @@ async function actualizarPlanesMovilOnline() {
   });
 }
 
-// ---------------- UBIGEO DEP_PROV_DIST ----------------
 async function actualizarUbigeoOnline() {
   const data = await fetchSheetGViz('DEP_PROV_DIST');
   const rows = data.table.rows || [];
@@ -410,7 +456,6 @@ async function descargarMovil(e) {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(arrayBuffer);
 
-    // Hoja PDV - MOVIL
     const sheetMovil = workbook.getWorksheet('PDV - MOVIL') || workbook.worksheets[0];
     const camposMovil = ['B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','B18','B20','B21','B22','B23','B24','B25','B26','B27','B28','B29','B30','B31','B32','B33','B34','B35','B36','B37','B38','B39','B40'];
     camposMovil.forEach(c => {
@@ -418,7 +463,6 @@ async function descargarMovil(e) {
       if (el) sheetMovil.getCell(c).value = el.value;
     });
 
-    // Hoja PORTABILIDAD o ALTA NUEVA
     const nombreSegundaHoja = (subtipo === 'PORTABILIDAD') ? 'PORTABILIDAD' : 'ALTA NUEVA';
     const sheetLineas = workbook.getWorksheet(nombreSegundaHoja) || workbook.worksheets[1];
 
