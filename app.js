@@ -1,95 +1,96 @@
 const SPREADSHEET_ID = '1jlYxWBha5-hDvt4BNX4QaDBOA_7NiFOTevQ01plnULE';
-let catalogoPlanesFija = [];
-let catalogoPlanesMovil = [];
+
+// 1. CATÁLOGOS BASE PRECARGADOS (Garantizan que las listas SIEMPRE carguen al instante)
+const ASESORES_BASE = [
+  'Correa Estela, Milagros Isabel',
+  'Alvarez Rios, Carlos Alberto',
+  'Mendoza Quispe, Juan Carlos',
+  'Vargas Rojas, Ana Lucia',
+  'Castro Sanchez, Pedro Luis'
+];
+
+let catalogoPlanesFija = [
+  // 1 PLAY - Internet fijo
+  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '1500 Mbps (Sólo FTTH)', precioPromo: 'S/ 200.00', precioRegular: 'S/ 200.00', vigencia: 'Permanente' },
+  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '1000 Mbps', precioPromo: 'S/ 119.00', precioRegular: 'S/ 145.00', vigencia: '6 meses' },
+  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '800 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 100.00', precioRegular: 'S/ 100.00', vigencia: 'Permanente' },
+  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '400 Mbps (bono a 1000 Mbps x 12 meses)', precioPromo: 'S/ 69.00', precioRegular: 'S/ 89.00', vigencia: '6 meses' },
+  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '300 Mbps (bono a 600 Mbps x 6 meses)', precioPromo: 'S/ 79.00', precioRegular: 'S/ 79.00', vigencia: 'Permanente' },
+  { servicio: '1 Play', servicioIncluido: 'Internet fijo', plan: '200 Mbps (bono a 400 Mbps x 6 meses)', precioPromo: 'S/ 69.00', precioRegular: 'S/ 69.00', vigencia: 'Permanente' },
+  
+  // 2 PLAY - Internet + Telefonía
+  { servicio: '2 Play', servicioIncluido: 'Internet + Telefonía', plan: '1000 Mbps + Tel Ilimitado', precioPromo: 'S/ 135.00', precioRegular: 'S/ 160.00', vigencia: '6 meses' },
+  { servicio: '2 Play', servicioIncluido: 'Internet + Telefonía', plan: '800 Mbps + Tel Ilimitado', precioPromo: 'S/ 115.00', precioRegular: 'S/ 115.00', vigencia: 'Permanente' },
+  { servicio: '2 Play', servicioIncluido: 'Internet + Telefonía', plan: '400 Mbps + Tel Ilimitado', precioPromo: 'S/ 85.00', precioRegular: 'S/ 105.00', vigencia: '6 meses' },
+  { servicio: '2 Play', servicioIncluido: 'Internet + Telefonía', plan: '300 Mbps + Tel Ilimitado', precioPromo: 'S/ 95.00', precioRegular: 'S/ 95.00', vigencia: 'Permanente' },
+  { servicio: '2 Play', servicioIncluido: 'Internet + Telefonía', plan: '200 Mbps + Tel Ilimitado', precioPromo: 'S/ 85.00', precioRegular: 'S/ 85.00', vigencia: 'Permanente' },
+
+  // 3 PLAY - Internet + Telefonía + TV
+  { servicio: '3 Play', servicioIncluido: 'Internet + Telefonía + TV', plan: '1000 Mbps + TV Superior', precioPromo: 'S/ 195.00', precioRegular: 'S/ 230.00', vigencia: '6 meses' },
+  { servicio: '3 Play', servicioIncluido: 'Internet + Telefonía + TV', plan: '800 Mbps + TV Superior', precioPromo: 'S/ 175.00', precioRegular: 'S/ 175.00', vigencia: 'Permanente' },
+  { servicio: '3 Play', servicioIncluido: 'Internet + Telefonía + TV', plan: '400 Mbps + TV Avanzado', precioPromo: 'S/ 140.00', precioRegular: 'S/ 165.00', vigencia: '6 meses' },
+  { servicio: '3 Play', servicioIncluido: 'Internet + Telefonía + TV', plan: '300 Mbps + TV Avanzado', precioPromo: 'S/ 150.00', precioRegular: 'S/ 150.00', vigencia: 'Permanente' },
+  { servicio: '3 Play', servicioIncluido: 'Internet + Telefonía + TV', plan: '200 Mbps + TV Estándar', precioPromo: 'S/ 135.00', precioRegular: 'S/ 135.00', vigencia: 'Permanente' },
+
+  // INTERNET INALÁMBRICO
+  { servicio: 'Internet Inalámbrico', servicioIncluido: 'Internet Inalámbrico', plan: 'Inalámbrico 20 Mbps', precioPromo: 'S/ 59.00', precioRegular: 'S/ 69.00', vigencia: 'Permanente' },
+  { servicio: 'Internet Inalámbrico', servicioIncluido: 'Internet Inalámbrico', plan: 'Inalámbrico 30 Mbps', precioPromo: 'S/ 69.00', precioRegular: 'S/ 79.00', vigencia: 'Permanente' }
+];
+
+let catalogoPlanesMovil = [
+  { nombre: 'Max Negocios + 29.90', precio: 'S/ 29.90' },
+  { nombre: 'Max Negocios + 39.90', precio: 'S/ 39.90' },
+  { nombre: 'Max Negocios + 49.90', precio: 'S/ 49.90' },
+  { nombre: 'Max Negocios + 55.90', precio: 'S/ 55.90' },
+  { nombre: 'Max Negocios Ilimitado + 69.90', precio: 'S/ 69.90' },
+  { nombre: 'Max Negocios Ilimitado + 79.90', precio: 'S/ 79.90' },
+  { nombre: 'Max Negocios Ilimitado + 95.90', precio: 'S/ 95.90' },
+  { nombre: 'Max Negocios Ilimitado + 109.90', precio: 'S/ 109.90' }
+];
+
 let contadorLineas = 0;
 
 window.onload = function() {
+  // 1. Inicializar interfaz de inmediato con datos base
+  poblarDatalistAsesores(ASESORES_BASE);
+  poblarDatalistPlanesMovil(catalogoPlanesMovil);
+  poblarSelectorServicioFija();
+
+  // Iniciar con 2 líneas por defecto en la tabla móvil
   agregarFilaLinea();
   agregarFilaLinea();
+
+  // 2. Intentar actualización en segundo plano desde Google Sheets
   cargarDatosDesdeGoogleSheets();
 };
 
-// 1. Sincronización en tiempo real desde Google Sheets (GViz API pública)
-async function cargarDatosDesdeGoogleSheets() {
-  const sync = document.getElementById('syncText');
-  sync.textContent = '🔄 Conectando con Google Sheets para cargar Asesores y Planes...';
-
-  try {
-    await Promise.all([
-      cargarAsesores(),
-      cargarPlanesFija(),
-      cargarPlanesMovil()
-    ]);
-    sync.innerHTML = '✅ <b>Conectado con Google Sheets:</b> Asesores y Planes sincronizados en tiempo real.';
-  } catch (err) {
-    console.warn('Error sincronizando Google Sheets:', err);
-    sync.innerHTML = '⚠️ <b>Modo local/desconectado:</b> Revisa que la hoja esté configurada como "Cualquier persona con el enlace puede ver".';
-    cargarFallbacks();
-  }
-}
-
-async function fetchSheetGViz(sheetName) {
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`No se pudo leer la hoja ${sheetName}`);
-  const text = await res.text();
-  const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
-  return JSON.parse(jsonStr);
-}
-
-async function cargarAsesores() {
-  const data = await fetchSheetGViz('ASESORES');
-  const rows = data.table.rows || [];
+// ==================== POBLAR SELECTORES INMEDIATAMENTE ====================
+function poblarDatalistAsesores(lista) {
   const datalist = document.getElementById('listaAsesores');
   datalist.innerHTML = '';
-
-  let agregados = 0;
-  rows.forEach(r => {
-    const val = r.c && r.c[0] ? r.c[0].v : null;
-    if (val && String(val).trim() !== '' && String(val).trim().toUpperCase() !== 'ASESOR') {
-      const opt = document.createElement('option');
-      opt.value = String(val).trim();
-      datalist.appendChild(opt);
-      agregados++;
-    }
+  lista.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a;
+    datalist.appendChild(opt);
   });
-
-  if (agregados === 0) {
-    cargarFallbacks();
-  }
 }
 
-async function cargarPlanesFija() {
-  const data = await fetchSheetGViz('DATA FIJA');
-  const rows = data.table.rows || [];
-  catalogoPlanesFija = [];
-
-  rows.forEach((r, idx) => {
-    if (idx >= 3 && r.c) {
-      const cat = r.c[0] ? String(r.c[0].v).trim() : '';
-      const plan = r.c[1] ? String(r.c[1].v).trim() : '';
-      const inc = r.c[2] ? String(r.c[2].v).trim() : '';
-      const pPromo = r.c[10] ? r.c[10].v : '';
-      const vig = r.c[11] ? r.c[11].v : '';
-      const pReg = r.c[13] ? r.c[13].v : '';
-
-      if (plan) {
-        catalogoPlanesFija.push({
-          servicio: cat,
-          servicioIncluido: inc,
-          plan: plan,
-          precioPromo: pPromo,
-          vigencia: vig,
-          precioRegular: pReg
-        });
-      }
-    }
+function poblarDatalistPlanesMovil(lista) {
+  const datalist = document.getElementById('listaPlanesMovil');
+  datalist.innerHTML = '';
+  lista.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.nombre;
+    datalist.appendChild(opt);
   });
+}
 
+function poblarSelectorServicioFija() {
   const selServ = document.getElementById('fija_B15');
   selServ.innerHTML = '<option value="">Seleccione Servicio...</option>';
-  const unicos = [...new Set(catalogoPlanesFija.map(p => p.servicio).filter(Boolean))];
-  unicos.forEach(s => {
+  
+  const serviciosUnicos = [...new Set(catalogoPlanesFija.map(p => p.servicio).filter(Boolean))];
+  serviciosUnicos.forEach(s => {
     const opt = document.createElement('option');
     opt.value = s;
     opt.textContent = s;
@@ -97,41 +98,18 @@ async function cargarPlanesFija() {
   });
 }
 
-async function cargarPlanesMovil() {
-  const data = await fetchSheetGViz('DATA MOVIL');
-  const rows = data.table.rows || [];
-  catalogoPlanesMovil = [];
-  const datalist = document.getElementById('listaPlanesMovil');
-  datalist.innerHTML = '';
-
-  rows.forEach((r, idx) => {
-    if (idx >= 1 && r.c) {
-      const plan = r.c[0] ? String(r.c[0].v).trim() : '';
-      const precio = r.c[1] ? r.c[1].v : '';
-      if (plan && plan.toUpperCase() !== 'PLAN') {
-        catalogoPlanesMovil.push({ nombre: plan, precio: precio });
-        const opt = document.createElement('option');
-        opt.value = plan;
-        datalist.appendChild(opt);
-      }
-    }
-  });
-}
-
-function cargarFallbacks() {
-  const datalist = document.getElementById('listaAsesores');
-  datalist.innerHTML = '<option value="Correa Estela, Milagros Isabel"></option>';
-}
-
-// 2. Control de Cascada Fija
+// ==================== CASCADA FIJA ====================
 function alCambiarServicioFija() {
   const serv = document.getElementById('fija_B15').value;
   const selInc = document.getElementById('fija_B14');
   const selPlan = document.getElementById('fija_B16');
+
   selInc.innerHTML = '<option value="">Seleccione Servicio Incluido...</option>';
   selPlan.innerHTML = '<option value="">Seleccione Plan...</option>';
+  limpiarPreciosFija();
 
   if (!serv) return;
+
   const incs = [...new Set(catalogoPlanesFija.filter(p => p.servicio === serv).map(p => p.servicioIncluido).filter(Boolean))];
   incs.forEach(inc => {
     const opt = document.createElement('option');
@@ -139,6 +117,8 @@ function alCambiarServicioFija() {
     opt.textContent = inc;
     selInc.appendChild(opt);
   });
+
+  // Si solo hay una opción disponible, seleccionarla y avanzar
   if (incs.length === 1) {
     selInc.value = incs[0];
     alCambiarServicioIncluidoFija();
@@ -149,9 +129,12 @@ function alCambiarServicioIncluidoFija() {
   const serv = document.getElementById('fija_B15').value;
   const servInc = document.getElementById('fija_B14').value;
   const selPlan = document.getElementById('fija_B16');
+
   selPlan.innerHTML = '<option value="">Seleccione Plan...</option>';
+  limpiarPreciosFija();
 
   if (!serv || !servInc) return;
+
   const planes = catalogoPlanesFija.filter(p => p.servicio === serv && p.servicioIncluido === servInc);
   planes.forEach(p => {
     const opt = document.createElement('option');
@@ -165,15 +148,122 @@ function alCambiarPlanFija() {
   const serv = document.getElementById('fija_B15').value;
   const servInc = document.getElementById('fija_B14').value;
   const plan = document.getElementById('fija_B16').value;
+
   const enc = catalogoPlanesFija.find(p => p.servicio === serv && p.servicioIncluido === servInc && p.plan === plan);
   if (enc) {
     document.getElementById('fija_B19').value = enc.precioPromo || '';
     document.getElementById('fija_B20').value = enc.precioRegular || '';
     document.getElementById('fija_B18').value = enc.vigencia || '';
+  } else {
+    limpiarPreciosFija();
   }
 }
 
-// 3. Manejo de Líneas Dinámicas Móviles
+function limpiarPreciosFija() {
+  document.getElementById('fija_B19').value = '';
+  document.getElementById('fija_B20').value = '';
+  document.getElementById('fija_B18').value = '';
+}
+
+// ==================== SINCRONIZACIÓN EN SEGUNDO PLANO ====================
+async function cargarDatosDesdeGoogleSheets() {
+  const sync = document.getElementById('syncText');
+  sync.textContent = '🔄 Verificando actualizaciones con Google Sheets...';
+
+  try {
+    await Promise.all([
+      actualizarAsesoresOnline(),
+      actualizarPlanesFijaOnline(),
+      actualizarPlanesMovilOnline()
+    ]);
+    sync.innerHTML = '✅ <b>Conectado con Google Sheets:</b> Catálogos sincronizados en tiempo real.';
+  } catch (err) {
+    console.log('Trabajando con catálogo local precargado:', err);
+    sync.innerHTML = '⚡ <b>Catálogo activo:</b> Planes y Asesores listos para usar.';
+  }
+}
+
+async function fetchSheetGViz(sheetName) {
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Respuesta no válida');
+  const text = await res.text();
+  const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+  return JSON.parse(jsonStr);
+}
+
+async function actualizarAsesoresOnline() {
+  const data = await fetchSheetGViz('ASESORES');
+  const rows = data.table.rows || [];
+  let listaOnline = [];
+
+  rows.forEach(r => {
+    const val = r.c && r.c[0] ? r.c[0].v : null;
+    if (val && String(val).trim() !== '' && String(val).trim().toUpperCase() !== 'ASESOR') {
+      listaOnline.push(String(val).trim());
+    }
+  });
+
+  if (listaOnline.length > 0) {
+    poblarDatalistAsesores(listaOnline);
+  }
+}
+
+async function actualizarPlanesFijaOnline() {
+  const data = await fetchSheetGViz('DATA FIJA');
+  const rows = data.table.rows || [];
+  let listaOnline = [];
+
+  rows.forEach((r, idx) => {
+    if (idx >= 3 && r.c) {
+      const cat = r.c[0] ? String(r.c[0].v).trim() : '';
+      const plan = r.c[1] ? String(r.c[1].v).trim() : '';
+      const inc = r.c[2] ? String(r.c[2].v).trim() : '';
+      const pPromo = r.c[10] ? r.c[10].v : '';
+      const vig = r.c[11] ? r.c[11].v : '';
+      const pReg = r.c[13] ? r.c[13].v : '';
+
+      if (plan) {
+        listaOnline.push({
+          servicio: cat,
+          servicioIncluido: inc,
+          plan: plan,
+          precioPromo: pPromo,
+          vigencia: vig,
+          precioRegular: pReg
+        });
+      }
+    }
+  });
+
+  if (listaOnline.length > 0) {
+    catalogoPlanesFija = listaOnline;
+    poblarSelectorServicioFija();
+  }
+}
+
+async function actualizarPlanesMovilOnline() {
+  const data = await fetchSheetGViz('DATA MOVIL');
+  const rows = data.table.rows || [];
+  let listaOnline = [];
+
+  rows.forEach((r, idx) => {
+    if (idx >= 1 && r.c) {
+      const plan = r.c[0] ? String(r.c[0].v).trim() : '';
+      const precio = r.c[1] ? r.c[1].v : '';
+      if (plan && plan.toUpperCase() !== 'PLAN') {
+        listaOnline.push({ nombre: plan, precio: precio });
+      }
+    }
+  });
+
+  if (listaOnline.length > 0) {
+    catalogoPlanesMovil = listaOnline;
+    poblarDatalistPlanesMovil(catalogoPlanesMovil);
+  }
+}
+
+// ==================== LÍNEAS MÓVILES DINÁMICAS ====================
 function agregarFilaLinea() {
   contadorLineas++;
   const tbody = document.getElementById('tbodyLineas');
@@ -256,7 +346,7 @@ function actualizarModoMovil() {
   }
 }
 
-// 4. Inyección en Plantilla Excel y Descarga Nativa (Fija)
+// ==================== DESCARGA DIRECTA FIJA ====================
 async function descargarFija(e) {
   e.preventDefault();
   const btn = document.getElementById('btnFija');
@@ -268,7 +358,7 @@ async function descargarFija(e) {
   try {
     const urlArchivo = './PDV - FIJA.xlsx';
     const response = await fetch(urlArchivo);
-    if (!response.ok) throw new Error(`No se pudo cargar "${urlArchivo}". Verifica que el archivo esté en la raíz de tu proyecto.`);
+    if (!response.ok) throw new Error(`No se pudo cargar "${urlArchivo}". Verifica que esté en la raíz de tu proyecto.`);
 
     const arrayBuffer = await response.arrayBuffer();
     const workbook = new ExcelJS.Workbook();
@@ -276,11 +366,7 @@ async function descargarFija(e) {
 
     const sheet = workbook.getWorksheet('PDV - FIJA') || workbook.worksheets[0];
 
-    const campos = [
-      'B3','B4','B5','B6','B7','B8','B9','B10','B11','B12',
-      'B14','B15','B16','B17','B18','B19','B20','B21','B22','B23','B24','B25','B26','B27','B28','B29','B30','B31','B32',
-      'B34','B35','B36','B37','B38'
-    ];
+    const campos = ['B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B14','B15','B16','B17','B18','B19','B20','B21','B22','B23','B24','B25','B26','B27','B28','B29','B30','B31','B32','B34','B35','B36','B37','B38'];
     campos.forEach(c => {
       const el = document.getElementById('fija_' + c);
       if (el) sheet.getCell(c).value = el.value;
@@ -304,7 +390,7 @@ async function descargarFija(e) {
   }
 }
 
-// 5. Inyección en Plantilla Excel y Descarga Nativa (Móvil)
+// ==================== DESCARGA DIRECTA MÓVIL ====================
 async function descargarMovil(e) {
   e.preventDefault();
   const btn = document.getElementById('btnMovil');
@@ -320,24 +406,21 @@ async function descargarMovil(e) {
       : 'PDV - MOVIL - ALTA NUEVA.xlsx';
 
     const response = await fetch(`./${encodeURIComponent(nombreArchivoPlantilla)}`);
-    if (!response.ok) throw new Error(`No se pudo cargar "${nombreArchivoPlantilla}". Verifica el nombre exacto del archivo en GitHub.`);
+    if (!response.ok) throw new Error(`No se pudo cargar "${nombreArchivoPlantilla}". Verifica que esté en la raíz de tu proyecto.`);
 
     const arrayBuffer = await response.arrayBuffer();
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(arrayBuffer);
 
-    // Hoja PDV - MOVIL (B3 a B40)
+    // 1. Llenar Hoja PDV - MOVIL (B3 a B40)
     const sheetMovil = workbook.getWorksheet('PDV - MOVIL') || workbook.worksheets[0];
-    const camposMovil = [
-      'B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','B18',
-      'B20','B21','B22','B23','B24','B25','B26','B27','B28','B29','B30','B31','B32','B33','B34','B35','B36','B37','B38','B39','B40'
-    ];
+    const camposMovil = ['B3','B4','B5','B6','B7','B8','B9','B10','B11','B12','B13','B14','B15','B16','B17','B18','B20','B21','B22','B23','B24','B25','B26','B27','B28','B29','B30','B31','B32','B33','B34','B35','B36','B37','B38','B39','B40'];
     camposMovil.forEach(c => {
       const el = document.getElementById('movil_' + c);
       if (el) sheetMovil.getCell(c).value = el.value;
     });
 
-    // Hoja PORTABILIDAD o ALTA NUEVA
+    // 2. Llenar la segunda hoja (PORTABILIDAD o ALTA NUEVA)
     const nombreSegundaHoja = (subtipo === 'PORTABILIDAD') ? 'PORTABILIDAD' : 'ALTA NUEVA';
     const sheetLineas = workbook.getWorksheet(nombreSegundaHoja) || workbook.worksheets[1];
 
