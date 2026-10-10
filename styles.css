@@ -126,3 +126,15 @@ tfoot td{font-weight:700;background:var(--fondo)}
 .consulta.warn{color:var(--warn)}
 .consulta .spin{width:11px;height:11px}
 .autollenado{background:var(--ok-bg)!important;transition:background .6s}
+
+/* Lista con buscador */
+.combo{position:relative}
+.combo input{padding-right:30px}
+.combo-flecha{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--gris);pointer-events:none;font-size:12px}
+.combo-lista{display:none;position:absolute;z-index:30;left:0;right:0;top:calc(100% + 4px);max-height:260px;overflow:auto;margin:0;padding:4px;list-style:none;background:var(--card);border:1px solid var(--borde);border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.12)}
+.combo-lista.ver{display:block}
+.combo-lista li{padding:8px 10px;border-radius:6px;cursor:pointer;font-size:13px}
+.combo-lista li b{color:var(--rojo)}
+.combo-lista li.activo{background:var(--rojo-suave)}
+.combo-lista li.elegido{font-weight:600}
+.combo-lista li.vacio{color:var(--gris);cursor:default}
