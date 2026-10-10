@@ -45,13 +45,28 @@
       const cb = '__netora_cb' + (++jsonpN) + '_' + Date.now();
       const sc = document.createElement('script');
       const fin = () => { delete window[cb]; sc.remove(); clearTimeout(t); };
-      const t = setTimeout(() => { fin(); reject(new Error('El servidor no respondió (tiempo agotado).')); }, 60000);
+      const t = setTimeout(() => { fin(); reject(new Error('El servidor no respondió (tiempo agotado).')); }, 180000);
       window[cb] = data => { fin(); resolve(data); };
       sc.onerror = () => { fin(); reject(new Error('NO_CONECTA')); };
       sc.src = API + '?' + new URLSearchParams(Object.assign({}, params, { callback: cb })).toString();
       document.head.appendChild(sc);
     });
   }
+  // Generar: por JSONP (GET) si los datos caben en la URL — evita errores CORS ("Failed to fetch").
+  // Si no cabe o falla, usa POST. idSolicitud hace que un reintento no registre dos veces.
+  async function apiGenerar(body) {
+    body.idSolicitud = body.idSolicitud || (Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
+    const { clave, ...resto } = body;
+    const datos = JSON.stringify(resto);
+    const largo = API.length + encodeURIComponent(datos).length + 120;
+    if (largo < 7500) {
+      try { return await apiGetJsonp({ action: 'generar', clave, datos }); }
+      catch (e) { if (e.message !== 'NO_CONECTA') throw e; }
+    }
+    try { return await apiPost(body); }
+    catch (e) { throw new Error('No se pudo conectar con el servidor. Revisa tu internet e intenta de nuevo.'); }
+  }
+
   async function apiPost(body) {
     const r = await fetch(API, {
       method: 'POST', redirect: 'follow',
@@ -601,7 +616,7 @@
 
     cargando(true, producto === 'MOVIL' ? 'Generando ficha MÓVIL – ' + t + '…' : 'Generando ficha FIJA…');
     try {
-      const r = await apiPost(body);
+      const r = await apiGenerar(body);
       cargando(false);
       if (!r.ok) {
         if (r.error === 'CLAVE_INVALIDA') { store.del('clave'); mostrarLogin('Tu clave cambió. Ingrésala de nuevo.'); return; }
