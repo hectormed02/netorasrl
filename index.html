@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fichas PDV · NETORA</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23d52b1e'/><path d='M9 22V10h3l8 8v-8h3v12h-3l-8-8v8z' fill='white'/></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- ACCESO -->
+  <section id="login" class="login oculto">
+    <form id="formLogin" class="login-card">
+      <div class="marca">N</div>
+      <h1>Fichas PDV</h1>
+      <p>NETORA SRL · Ingresa la clave que te dio tu supervisor</p>
+      <input id="clave" type="password" placeholder="Clave de acceso" autocomplete="current-password" required>
+      <p id="loginError" class="error-txt"></p>
+      <button class="btn" type="submit">Ingresar</button>
+    </form>
+  </section>
+
+  <!-- APP -->
+  <div id="app" class="oculto">
+    <header class="top">
+      <div class="top-in">
+        <div class="logo"><span class="marca sm">N</span><div><b>Fichas PDV</b><small>NETORA SRL</small></div></div>
+        <nav class="tabs" role="tablist">
+          <button class="tab activo" data-p="FIJA" role="tab">Fija</button>
+          <button class="tab" data-p="MOVIL" role="tab">Móvil</button>
+        </nav>
+        <div class="top-acc">
+          <button class="link" id="btnNueva" title="Borrar el formulario actual">Nueva venta</button>
+          <button class="link" id="btnSalir" title="Cerrar sesión">Salir</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="contenido">
+      <div id="cargando" class="cargando"><span class="spin"></span> Cargando ficha…</div>
+      <form id="ficha" novalidate></form>
+      <section id="historial" class="card oculto">
+        <h2>Últimas fichas descargadas</h2>
+        <ul id="histLista" class="hist"></ul>
+      </section>
+    </main>
+
+    <footer class="barra">
+      <div class="barra-in">
+        <div class="resumen" id="resumen">–</div>
+        <label class="check"><input type="checkbox" id="registrar" checked> Registrar venta</label>
+        <button class="btn" id="btnGenerar" type="button">Descargar ficha .xlsx</button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- OVERLAY / MODAL / TOAST -->
+  <div id="overlay" class="overlay oculto"><div class="overlay-card"><span class="spin grande"></span><p id="overlayTxt">Generando ficha…</p><small>Puede tardar unos segundos</small></div></div>
+  <div id="modal" class="overlay oculto"><div class="modal-card"><h3 id="modalTit"></h3><p id="modalTxt"></p><div class="modal-acc" id="modalAcc"></div></div></div>
+  <div id="toast" class="toast"></div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
