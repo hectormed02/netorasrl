@@ -29,7 +29,18 @@
   // ---------- API ----------
   // GET por JSONP: Apps Script no siempre manda cabeceras CORS (p.ej. si hay que reautorizar)
   let jsonpN = 0;
-  function apiGet(params) {
+  // Intenta JSONP; si falla (p.ej. implementación antigua sin "callback"), prueba con fetch normal
+  async function apiGet(params) {
+    try { return await apiGetJsonp(params); }
+    catch (e) {
+      if (e.message !== 'NO_CONECTA') throw e;
+      try {
+        const r = await fetch(API + '?' + new URLSearchParams(params).toString(), { redirect: 'follow' });
+        return await r.json();
+      } catch (e2) { throw new Error('NO_CONECTA'); }
+    }
+  }
+  function apiGetJsonp(params) {
     return new Promise((resolve, reject) => {
       const cb = '__netora_cb' + (++jsonpN) + '_' + Date.now();
       const sc = document.createElement('script');
@@ -153,9 +164,20 @@
     form.innerHTML = html;
 
     // eventos
-    form.querySelectorAll('[data-fila]').forEach(el => {
+    form.querySelectorAll('[data-combo]').forEach(enlazarCombo);
+    form.querySelectorAll('[data-fila]:not([data-combo])').forEach(el => {
       const ev = el.tagName === 'SELECT' ? 'change' : 'input';
-      el.addEventListener(ev, () => {
+      el.addEventListener(ev, () => alCambiar(el));
+    });
+    form.querySelectorAll('.seg').forEach(b => b.onclick = () => {
+      const d = campoPor('MOVIL', 'TIPO OPERACIÓN');
+      datos.MOVIL[d.fila] = b.dataset.v; guardar(); pintarFormulario();
+    });
+    if (producto === 'MOVIL') enlazarLineas();
+    actualizarCalculos();
+  }
+
+  function alCambiar(el) {
         datos[producto][el.dataset.fila] = el.value;
         el.classList.remove('invalido');
         limpiarDependientes(+el.dataset.fila);
@@ -167,14 +189,69 @@
         const num = el.value.replace(/\D/g, '');
         if (L === 'RUC' && num.length === 11) buscarRuc(+el.dataset.fila, num);
         if (L === 'DNI' && num.length === 8) buscarDni(+el.dataset.fila, num);
+  }
+
+  // ---------- Lista con buscador (escribe y filtra) ----------
+  const comboOps = {};
+  const sinTilde = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  function enlazarCombo(inp) {
+    const fila = +inp.dataset.fila;
+    const lista = inp.parentNode.querySelector('.combo-lista');
+    let activo = -1, visibles = [];
+    const valorActual = () => datos[producto][fila] || '';
+
+    function pintar(filtro) {
+      const ops = comboOps[fila] || [];
+      const palabras = sinTilde(filtro).split(/\s+/).filter(Boolean);
+      visibles = palabras.length ? ops.filter(o => { const t = sinTilde(o); return palabras.every(p => t.includes(p)); }) : ops.slice();
+      activo = visibles.length ? 0 : -1;
+      lista.innerHTML = visibles.length
+        ? visibles.slice(0, 80).map((o, i) => '<li role="option" data-i="' + i + '" class="' + (i === activo ? 'activo' : '') + (o === valorActual() ? ' elegido' : '') + '">' + resaltar(o, palabras) + '</li>').join('')
+        : '<li class="vacio">Sin coincidencias</li>';
+      abrir(true);
+    }
+    function resaltar(o, palabras) {
+      let h = esc(o);
+      palabras.forEach(p => {
+        const i = sinTilde(o).indexOf(p);
+        if (i >= 0) { const orig = o.substr(i, p.length); h = h.replace(esc(orig), '<b>' + esc(orig) + '</b>'); }
       });
+      return h;
+    }
+    function abrir(on) { lista.classList.toggle('ver', on); inp.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+    function marcar() {
+      lista.querySelectorAll('li[data-i]').forEach(li => li.classList.toggle('activo', +li.dataset.i === activo));
+      const a = lista.querySelector('li.activo'); if (a) a.scrollIntoView({ block: 'nearest' });
+    }
+    function elegir(o) {
+      inp.value = o; abrir(false);
+      if (o !== valorActual()) alCambiar(inp);
+    }
+
+    inp.addEventListener('focus', () => { inp.select(); pintar(''); });
+    inp.addEventListener('input', () => pintar(inp.value));
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (!lista.classList.contains('ver')) pintar(inp.value); activo = Math.min(activo + 1, Math.min(visibles.length, 80) - 1); marcar(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); activo = Math.max(activo - 1, 0); marcar(); }
+      else if (e.key === 'Enter') { e.preventDefault(); if (activo >= 0 && visibles[activo]) elegir(visibles[activo]); }
+      else if (e.key === 'Escape') { inp.value = valorActual(); abrir(false); inp.blur(); }
+      else if (e.key === 'Tab' && lista.classList.contains('ver') && inp.value && activo >= 0 && visibles[activo]) elegir(visibles[activo]);
     });
-    form.querySelectorAll('.seg').forEach(b => b.onclick = () => {
-      const d = campoPor('MOVIL', 'TIPO OPERACIÓN');
-      datos.MOVIL[d.fila] = b.dataset.v; guardar(); pintarFormulario();
+    lista.addEventListener('mousedown', e => {
+      const li = e.target.closest('li[data-i]'); if (!li) return;
+      e.preventDefault(); elegir(visibles[+li.dataset.i]);
     });
-    if (producto === 'MOVIL') enlazarLineas();
-    actualizarCalculos();
+    inp.addEventListener('blur', () => {
+      setTimeout(() => {
+        abrir(false);
+        const txt = inp.value.trim();
+        if (!txt) { if (valorActual()) { inp.value = ''; alCambiar(inp); } return; }
+        const exacto = (comboOps[fila] || []).find(o => sinTilde(o) === sinTilde(txt));
+        if (exacto) { if (exacto !== valorActual()) elegir(exacto); else inp.value = exacto; }
+        else if (visibles.length === 1) elegir(visibles[0]);
+        else inp.value = valorActual();          // solo se aceptan valores de la lista
+      }, 120);
+    });
   }
 
   function campoHTML(d) {
@@ -204,6 +281,13 @@
       if (producto === 'FIJA' && L === 'PLAN') ops = planesFiltrados(ops);
       if (producto === 'FIJA' && (L === 'SERVICIO' || L === 'SERVICIO INCLUIDO')) refresca = true;
       if (v && ops.indexOf(v) < 0) ops = [v].concat(ops);
+      if (/^(ASESOR|FFVV)$/.test(L) || ops.length > 8) {
+        comboOps[d.fila] = ops;
+        return '<div class="campo' + (ancho ? ' ancho' : '') + '">' + lab +
+          '<div class="combo"><input ' + base + ' data-combo="1"' + (refresca ? ' data-refresca="1"' : '') +
+          ' value="' + esc(v) + '" placeholder="Escribe para buscar…" autocomplete="off" role="combobox" aria-expanded="false">' +
+          '<span class="combo-flecha" aria-hidden="true">▾</span><ul class="combo-lista" role="listbox"></ul></div></div>';
+      }
       return '<div class="campo' + (ancho ? ' ancho' : '') + '">' + lab + '<select ' + base + (refresca ? ' data-refresca="1"' : '') + '>' +
         '<option value="">Seleccionar…</option>' +
         ops.map(o => '<option' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select></div>';
