@@ -27,10 +27,19 @@
   const guardar = () => { store.set('borrador', datos); store.set('lineas', lineas); store.set('campania', campania); store.set('producto', producto); };
 
   // ---------- API ----------
-  async function apiGet(params) {
-    const url = API + '?' + new URLSearchParams(params).toString();
-    const r = await fetch(url, { redirect: 'follow' });
-    return r.json();
+  // GET por JSONP: Apps Script no siempre manda cabeceras CORS (p.ej. si hay que reautorizar)
+  let jsonpN = 0;
+  function apiGet(params) {
+    return new Promise((resolve, reject) => {
+      const cb = '__netora_cb' + (++jsonpN) + '_' + Date.now();
+      const sc = document.createElement('script');
+      const fin = () => { delete window[cb]; sc.remove(); clearTimeout(t); };
+      const t = setTimeout(() => { fin(); reject(new Error('El servidor no respondió (tiempo agotado).')); }, 60000);
+      window[cb] = data => { fin(); resolve(data); };
+      sc.onerror = () => { fin(); reject(new Error('NO_CONECTA')); };
+      sc.src = API + '?' + new URLSearchParams(Object.assign({}, params, { callback: cb })).toString();
+      document.head.appendChild(sc);
+    });
   }
   async function apiPost(body) {
     const r = await fetch(API, {
@@ -62,7 +71,10 @@
       cambiarProducto(producto);
       pintarHistorial();
     } catch (e) {
-      $('#cargando').innerHTML = 'No se pudo cargar la ficha: ' + esc(e.message) + ' <button class="link" onclick="location.reload()">Reintentar</button>';
+      const ping = API + '?action=ping&clave=' + encodeURIComponent(store.get('clave', ''));
+      $('#cargando').innerHTML = e.message === 'NO_CONECTA'
+        ? '<b>No se pudo conectar con Apps Script.</b><br><small>Abre <a href="' + esc(ping) + '" target="_blank" rel="noopener">esta prueba</a>: debe mostrar {"ok":true}. Si pide iniciar sesión o muestra un error, revisa la implementación (Cualquier usuario + Nueva versión) y que hayas autorizado los permisos.</small><br><button class="link" onclick="location.reload()">Reintentar</button>'
+        : 'No se pudo cargar la ficha: ' + esc(e.message) + ' <button class="link" onclick="location.reload()">Reintentar</button>';
     }
   }
 
@@ -500,7 +512,7 @@
       action: 'generar', clave: store.get('clave', ''), producto, tipo: t, campos,
       campania: producto === 'MOVIL' ? campania : '',
       lineas: producto === 'MOVIL' ? lineas[t].filter(l => l.linea || l.plan).map(l => ({ linea: l.linea || '', plan: l.plan || '', descuento: l.descuento || '0%', equipo: l.equipo || '', precio: l.precio || '' })) : [],
-      registrar: $('#registrar').checked, forzar: !!forzar
+      registrar: true
     };
 
     cargando(true, producto === 'MOVIL' ? 'Generando ficha MÓVIL – ' + t + '…' : 'Generando ficha FIJA…');
@@ -511,18 +523,9 @@
         if (r.error === 'CLAVE_INVALIDA') { store.del('clave'); mostrarLogin('Tu clave cambió. Ingrésala de nuevo.'); return; }
         throw new Error(r.error);
       }
-      if (r.duplicado) {
-        confirmar('Oportunidad ya registrada', 'La oportunidad ' + r.oportunidad + ' ya existe en ' + r.hoja + '. ¿Qué deseas hacer?', [
-          { txt: 'Cancelar' },
-          { txt: 'Solo descargar', fn: () => { $('#registrar').checked = false; generar(false); } },
-          { txt: 'Registrar igual', principal: true, fn: () => generar(true) }
-        ]);
-        return;
-      }
       descargar(r.base64, r.nombre);
       agregarHistorial(r);
-      toast(r.fila ? '✓ Ficha descargada y registrada en ' + r.hoja + ' (fila ' + r.fila + ')' : '✓ Ficha descargada', 'ok');
-      $('#registrar').checked = true;
+      toast('✓ Ficha descargada', 'ok');
       setTimeout(() => confirmar('Ficha lista', 'Se descargó ' + r.nombre + '. Envíala al BO. ¿Empezar una nueva venta?', [
         { txt: 'Seguir editando' },
         { txt: 'Nueva venta', principal: true, fn: limpiar }
@@ -554,7 +557,7 @@
     $('#historial').classList.toggle('oculto', !h.length);
     $('#histLista').innerHTML = h.map(x => '<li><span>' + esc(x.nombre) + '</span><small>' +
       new Date(x.fecha).toLocaleString('es-PE', { dateStyle: 'short', timeStyle: 'short' }) +
-      (x.fila ? ' · ' + esc(x.hoja) + ' fila ' + x.fila : ' · sin registrar') + '</small></li>').join('');
+      '</small></li>').join('');
   }
 
   // ---------- UI ----------
